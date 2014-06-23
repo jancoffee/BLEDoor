@@ -7,4 +7,5 @@
     <string name="ble_not_supported">This device does not support BLE</string>
     <string name="start_scan_ble_button_text">Start Scan for a BLE device</string>
     <string name="stop_scan_ble_button_text">Stop Scan for a BLE device</string>
+    <string name="unknown_device">unknown device</string>
 </resources>
