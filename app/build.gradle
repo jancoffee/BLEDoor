@@ -4,7 +4,7 @@ android {
     compileSdkVersion 18
     buildToolsVersion '19.1.0'
     defaultConfig {
-        applicationId 'bledoor.hiq.se.bledoor'
+        applicationId 'bledoor.river.se.bledoor'
         minSdkVersion 18
         targetSdkVersion 18
         versionCode 1

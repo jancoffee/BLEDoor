@@ -1,4 +1,4 @@
-package bledoor.hiq.se.bledoor;
+package bledoor.river.se.bledoor;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
