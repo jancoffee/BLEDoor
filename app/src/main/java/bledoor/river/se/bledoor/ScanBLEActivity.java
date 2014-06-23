@@ -15,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -23,10 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.zip.Inflater;
 
 
 public class ScanBLEActivity extends Activity {
@@ -39,7 +34,7 @@ public class ScanBLEActivity extends Activity {
     private Button scanBleButton = null;
     private ListView bleListView;
     private static final int REQUEST_ENABLE_BT = 1;
-    private ArrayList<BLEDevices> bleDeviceses;
+    private ArrayList<BLEDeviceInfo> bleDeviceses;
     MyListAdapter myListAdapter;
 
     @Override
@@ -72,7 +67,7 @@ public class ScanBLEActivity extends Activity {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
-        bleDeviceses = new ArrayList<BLEDevices>();
+        bleDeviceses = new ArrayList<BLEDeviceInfo>();
         myListAdapter = new MyListAdapter(bleDeviceses);
         bleListView.setAdapter(myListAdapter);
     }
@@ -161,11 +156,11 @@ public class ScanBLEActivity extends Activity {
                             //Toast.makeText(getBaseContext(),deviceStr,Toast.LENGTH_SHORT).show();
 
                             //Create a new BLE Device object and update information in the Data source
-                            BLEDevices tmp = new BLEDevices(device.getAddress(),rssi,device,scanRecord);
+                            BLEDeviceInfo tmp = new BLEDeviceInfo(device.getAddress(),rssi,device,scanRecord);
                             Log.i(LOGTAG,"checking contains");
                             if(bleDeviceses.contains(tmp)){
                                 //check whether we should update the rssi value
-                                BLEDevices device = bleDeviceses.get(bleDeviceses.indexOf(tmp));
+                                BLEDeviceInfo device = bleDeviceses.get(bleDeviceses.indexOf(tmp));
                                 if(device.rssi != rssi) {
                                     device.rssi = rssi;
                                 }
@@ -181,10 +176,10 @@ public class ScanBLEActivity extends Activity {
 
     //Adapter for displaying BLE devices
     class MyListAdapter extends BaseAdapter {
-        private ArrayList<BLEDevices> bleDeviceses;
+        private ArrayList<BLEDeviceInfo> bleDeviceses;
         private LayoutInflater inflater;
 
-        MyListAdapter(ArrayList<BLEDevices> bleDeviceses){
+        MyListAdapter(ArrayList<BLEDeviceInfo> bleDeviceses){
             this.bleDeviceses = bleDeviceses;
             inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
@@ -195,7 +190,7 @@ public class ScanBLEActivity extends Activity {
         }
 
         @Override
-        public BLEDevices getItem(int position) {
+        public BLEDeviceInfo getItem(int position) {
             return bleDeviceses.get(position);
         }
 
@@ -211,7 +206,7 @@ public class ScanBLEActivity extends Activity {
             if (convertView == null) {
                 convertView = inflater.inflate(R.layout.ble_list_item, null);
             } else {
-                //bleDevice = (BLEDevices) convertView.getTag();
+                //bleDevice = (BLEDeviceInfo) convertView.getTag();
             }
 
             //Getting the field in the listview obj
@@ -219,7 +214,7 @@ public class ScanBLEActivity extends Activity {
             TextView rssi = (TextView) convertView.findViewById(R.id.ble_item_rssi_level);
 
             //get the device_info from "datasource"
-            BLEDevices device = bleDeviceses.get(position);
+            BLEDeviceInfo device = bleDeviceses.get(position);
 
             //setting the device_info to the listview obj
             final String deviceName = device.address;
@@ -236,7 +231,7 @@ public class ScanBLEActivity extends Activity {
     }
 
     //Container class describing the BLE device
-    class BLEDevices{
+    class BLEDeviceInfo {
         //address of the bluetooth LE device
         public String address;
 
@@ -249,7 +244,7 @@ public class ScanBLEActivity extends Activity {
         //scanrecord from the BLE device
         byte[] scanRecord;
 
-        BLEDevices(String address,int rssi,BluetoothDevice bluetoothDevice,byte[] scanRecord){
+        BLEDeviceInfo(String address, int rssi, BluetoothDevice bluetoothDevice, byte[] scanRecord){
             this.address = address;
             this.rssi = rssi;
             this.bluetoothDevice = bluetoothDevice;
@@ -258,13 +253,9 @@ public class ScanBLEActivity extends Activity {
 
         @Override
         public boolean equals(Object object){
-            boolean retVal = false;
-            if ( this == object ) retVal = true;
-            if ( !(object instanceof BLEDevices) ) retVal = false;
-            //Fixme
-            retVal = address.equals(((BLEDevices) object).address);
-            Log.i(LOGTAG,"equals"+retVal);
-            return retVal;
+            if ( this == object ) return true;
+            if ( !(object instanceof BLEDeviceInfo) ) return false;
+            return address.equals(((BLEDeviceInfo) object).address);
         }
         @Override
         public int hashCode(){
