@@ -153,26 +153,34 @@ public class ScanBLEActivity extends Activity {
                                     "\nBluetoothClass:"+device.getBluetoothClass().toString()+
                                     "\nAddress:"+device.getAddress()+
                                     "\nrssi:"+rssi;
-                            //Toast.makeText(getBaseContext(),deviceStr,Toast.LENGTH_SHORT).show();
-
-                            //Create a new BLE Device object and update information in the Data source
-                            BLEDeviceInfo tmp = new BLEDeviceInfo(device.getAddress(),rssi,device,scanRecord);
-                            Log.i(LOGTAG,"checking contains");
-                            if(bleDeviceses.contains(tmp)){
-                                //check whether we should update the rssi value
-                                BLEDeviceInfo device = bleDeviceses.get(bleDeviceses.indexOf(tmp));
-                                if(device.rssi != rssi) {
-                                    device.rssi = rssi;
-                                }
-                            }else{
-                                bleDeviceses.add(tmp);
-                            }
-                            myListAdapter.notifyDataSetChanged();
-
+                            Log.d(LOGTAG,deviceStr);
+                            updateAdapter(device, rssi, scanRecord);
                         }
                     });
                 }
             };
+
+    private void updateAdapter(final BluetoothDevice device, final int rssi, final byte[] scanRecord){
+        Log.d(LOGTAG,"updateAdapter BluetoothDevice");
+        if(device==null) {
+            Log.d(LOGTAG,"No information about BluetoothDevice, can't update adapter");
+            return;
+        }
+        //Create a new BLE Device object and update information in the Data source
+        BLEDeviceInfo tmp = new BLEDeviceInfo(device.getAddress(),rssi,device,scanRecord);
+        Log.i(LOGTAG,"checking contains");
+        if(bleDeviceses.contains(tmp)){
+            //check whether we should update the rssi value
+            BLEDeviceInfo bleDeviceInfo = bleDeviceses.get(bleDeviceses.indexOf(tmp));
+            if(bleDeviceInfo.rssi != rssi) {
+                bleDeviceInfo.rssi = rssi;
+            }
+        }else{
+            bleDeviceses.add(tmp);
+        }
+        myListAdapter.notifyDataSetChanged();
+
+    }
 
     //Adapter for displaying BLE devices
     class MyListAdapter extends BaseAdapter {
