@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -26,6 +27,8 @@ import java.util.ArrayList;
 
 public class ScanBLEActivity extends Activity {
 
+    public static final String BLE_ADRESS = "BLE_ADRESS";
+    public static final String BLE_NAME = "BLE_NAME";
     final String LOGTAG = "ScanBLEActivity";
     private BluetoothAdapter bluetoothAdapter = null;
     private Handler handler;
@@ -70,6 +73,28 @@ public class ScanBLEActivity extends Activity {
         bleDeviceses = new ArrayList<BLEDeviceInfo>();
         myListAdapter = new MyListAdapter(bleDeviceses);
         bleListView.setAdapter(myListAdapter);
+
+        bleListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(LOGTAG,"onItemClick pos:"+position+ " id:"+id);
+
+                //disable scanning
+                scanLeDevice(false);
+
+                //Get info from the BLE device
+                BLEDeviceInfo bleDeviceInfo = bleDeviceses.get(position);
+                String address = bleDeviceInfo.address;
+                String name = bleDeviceInfo.bluetoothDevice.getName();
+
+                //send the info in a Intent to a start a activity
+                //fixme: make this a application local intent!
+                Intent startControlActivity = new Intent(getApplicationContext(),DeviceControlActivity.class);
+                startControlActivity.putExtra(BLE_ADRESS, address);
+                startControlActivity.putExtra(BLE_NAME, name);
+                startActivity(startControlActivity);
+            }
+        });
     }
 
     @Override
@@ -114,7 +139,7 @@ public class ScanBLEActivity extends Activity {
 
 
     /**
-     * Start the scanning of BLE devices
+     * Start/stop the scanning of BLE devices
      * */
     private void scanLeDevice(final boolean enable) {
         Log.d(LOGTAG,"scanLeDevice "+enable);
