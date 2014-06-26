@@ -325,29 +325,30 @@ public class DeviceControlActivity extends Activity {
          */
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic,int status) {
-            Log.d(LOGTAG,"onCharacteristicRead");
+            Log.d(LOGTAG,"onCharacteristicRead status:"+status + " UUID:"+characteristic.getUuid());
+
 
         }
 
         /**
-         * Callback indicating the result of a characteristic write operation.
+         * Callback indicating the result of a characteristic writeBeep operation.
          *
-         * <p>If this callback is invoked while a reliable write transaction is
+         * <p>If this callback is invoked while a reliable writeBeep transaction is
          * in progress, the value of the characteristic represents the value
          * reported by the remote device. An application should compare this
          * value to the desired value to be written. If the values don't match,
-         * the application must abort the reliable write transaction.
+         * the application must abort the reliable writeBeep transaction.
          *
          * @param gatt GATT client invoked {@link BluetoothGatt#writeCharacteristic}
          * @param characteristic Characteristic that was written to the associated
          *                       remote device.
-         * @param status The result of the write operation
+         * @param status The result of the writeBeep operation
          *               {@link BluetoothGatt#GATT_SUCCESS} if the operation succeeds.
          */
         @Override
-        public void onCharacteristicWrite(BluetoothGatt gatt,
-                                          BluetoothGattCharacteristic characteristic, int status) {
-            Log.d(LOGTAG,"onCharacteristicWrite");
+        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            Log.d(LOGTAG,"onCharacteristicWrite status:"+ status + " UUID:"+characteristic.getUuid());
+
         }
 
         /**
@@ -379,12 +380,12 @@ public class DeviceControlActivity extends Activity {
         }
 
         /**
-         * Callback indicating the result of a descriptor write operation.
+         * Callback indicating the result of a descriptor writeBeep operation.
          *
          * @param gatt GATT client invoked {@link BluetoothGatt#writeDescriptor}
          * @param descriptor Descriptor that was writte to the associated
          *                   remote device.
-         * @param status The result of the write operation
+         * @param status The result of the writeBeep operation
          *               {@link BluetoothGatt#GATT_SUCCESS} if the operation succeeds.
          */
         @Override
@@ -394,10 +395,10 @@ public class DeviceControlActivity extends Activity {
         }
 
         /**
-         * Callback invoked when a reliable write transaction has been completed.
+         * Callback invoked when a reliable writeBeep transaction has been completed.
          *
          * @param gatt GATT client invoked {@link BluetoothGatt#executeReliableWrite}
-         * @param status {@link BluetoothGatt#GATT_SUCCESS} if the reliable write
+         * @param status {@link BluetoothGatt#GATT_SUCCESS} if the reliable writeBeep
          *               transaction was executed successfully
          */
         @Override
