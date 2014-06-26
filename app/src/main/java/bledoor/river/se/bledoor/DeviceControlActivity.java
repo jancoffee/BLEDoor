@@ -184,6 +184,95 @@ public class DeviceControlActivity extends Activity {
 
         }
 
+
+        //read a BluetoothGattCharacteristic Properties
+        private void readCharacteristicProperties(final int properties, BluetoothGattCharacteristic characteristic){
+            Log.d(LOGTAG,"Characteristic properties:"+ properties );
+            int format = 0;
+            /*
+            switch (properties & 0x01){
+                case BluetoothGattCharacteristic.FORMAT_FLOAT:
+                    Log.d(LOGTAG,"FORMAT_FLOAT");
+                    break;
+                case BluetoothGattCharacteristic.FORMAT_SFLOAT:
+                    Log.d(LOGTAG,"FORMAT_SFLOAT");
+                    break;
+                case BluetoothGattCharacteristic.FORMAT_SINT16:
+                    Log.d(LOGTAG,"FORMAT_SINT16");
+                    break;
+                case BluetoothGattCharacteristic.FORMAT_SINT32:
+                    Log.d(LOGTAG,"FORMAT_SINT32");
+                    break;
+                case BluetoothGattCharacteristic.FORMAT_SINT8:
+                    Log.d(LOGTAG,"FORMAT_SINT8");
+                    break;
+                case BluetoothGattCharacteristic.FORMAT_UINT16:
+                    Log.d(LOGTAG,"FORMAT_UINT16");
+                    break;
+                case BluetoothGattCharacteristic.FORMAT_UINT32:
+                    Log.d(LOGTAG,"FORMAT_UINT32");
+                    break;
+                case BluetoothGattCharacteristic.FORMAT_UINT8:
+                    Log.d(LOGTAG,"FORMAT_UINT8");
+                    break;
+                default:
+                    Log.d(LOGTAG,"unknown properties:"+properties);
+                    break;
+            }
+
+//            if ((properties & 0x01) != 0) {
+            if ((properties & BluetoothGattCharacteristic.FORMAT_FLOAT) != 0) {
+                format = BluetoothGattCharacteristic.FORMAT_FLOAT;
+                Log.d(LOGTAG, "Heart rate format FORMAT_FLOAT.");
+                //final int heartRate = characteristic.getIntValue(format, 1);
+                //Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
+            } else if((properties & BluetoothGattCharacteristic.FORMAT_SFLOAT) != 0) {
+                format = BluetoothGattCharacteristic.FORMAT_SFLOAT;
+                Log.d(LOGTAG, "Heart rate format FORMAT_SFLOAT.");
+                //final int heartRate = characteristic.getIntValue(format, 1);
+                //Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
+            } else if((properties & BluetoothGattCharacteristic.FORMAT_SINT16) != 0) {
+                format = BluetoothGattCharacteristic.FORMAT_SINT16;
+                Log.d(LOGTAG, "Heart rate format FORMAT_SINT16.");
+                //final int heartRate = characteristic.getIntValue(format, 1);
+                //Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
+            } else if((properties & BluetoothGattCharacteristic.FORMAT_SINT32) != 0) {
+                format = BluetoothGattCharacteristic.FORMAT_SINT32;
+                Log.d(LOGTAG, "Heart rate format FORMAT_SINT32.");
+                //final int heartRate = characteristic.getIntValue(format, 1);
+                //Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
+            } else if((properties & BluetoothGattCharacteristic.FORMAT_SINT8) != 0) {
+                format = BluetoothGattCharacteristic.FORMAT_SINT8;
+                Log.d(LOGTAG, "Heart rate format FORMAT_SINT8");
+                //final int heartRate = characteristic.getIntValue(format, 1);
+                //Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
+            } else if((properties & BluetoothGattCharacteristic.FORMAT_UINT16) != 0) {
+                format = BluetoothGattCharacteristic.FORMAT_UINT16;
+                Log.d(LOGTAG, "Heart rate format FORMAT_UINT16");
+                //final int heartRate = characteristic.getIntValue(format, 1);
+                //Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
+            } else if((properties & BluetoothGattCharacteristic.FORMAT_UINT32) != 0) {
+                format = BluetoothGattCharacteristic.FORMAT_UINT32;
+                Log.d(LOGTAG, "Heart rate format FORMAT_UINT32");
+                //final int heartRate = characteristic.getIntValue(format, 1);
+                //Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
+            } else if((properties & BluetoothGattCharacteristic.FORMAT_UINT8) != 0) {
+                format = BluetoothGattCharacteristic.FORMAT_UINT8;
+                Log.d(LOGTAG, "Heart rate format FORMAT_UINT8");
+                //final int heartRate = characteristic.getIntValue(format, 1);
+                //Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
+            } else{
+                Log.d(LOGTAG, "Unknown properties format."+properties);
+
+            }
+
+            */
+            if(characteristic.getValue()!=null) {
+                Log.d(LOGTAG, "Characteristic getvalue:" + characteristic.getValue().toString());
+            }
+
+        }
+
         /**
          * Callback invoked when the list of remote services, characteristics and descriptors
          * for the remote device have been updated, ie new services have been discovered.
@@ -199,13 +288,21 @@ public class DeviceControlActivity extends Activity {
                 //All ok, do stuff
                 servicesDiscovered = true;
                 for(BluetoothGattService service : gatt.getServices()){
-                    Log.d(LOGTAG,"Service found Uuid:"+service.getUuid() + " of type:"+service.getType());
+                    Log.d(LOGTAG,"Service found Uuid:"+UUIDParser.Parse(service.getUuid()) + " of type:"+service.getType());
 
                     for( BluetoothGattCharacteristic characteristic : service.getCharacteristics()){
-                        Log.d(LOGTAG,"Characteristic found Uuid:"+characteristic.getUuid());
+                        Log.d(LOGTAG,"Characteristic found Uuid:"+UUIDParser.Parse(characteristic.getUuid()));
+                        Log.d(LOGTAG,"Characteristic permissions:"+ characteristic.getPermissions());
+
+                        readCharacteristicProperties(characteristic.getProperties(), characteristic);
 
                         for(BluetoothGattDescriptor descriptor : characteristic.getDescriptors() ){
-                            Log.d(LOGTAG,"BluetoothGattDescriptor found Uuid:"+descriptor.getUuid());
+                            Log.d(LOGTAG,"BluetoothGattDescriptor found Uuid:"+UUIDParser.Parse(descriptor.getUuid()));
+                            Log.d(LOGTAG,"BluetoothGattDescriptor permissions:"+ descriptor.getPermissions());
+
+                            if(descriptor.getValue()!=null)
+                                Log.d(LOGTAG,"BluetoothGattDescriptor getvalue:" + descriptor.getValue());
+
                         }
                     }
                 }
@@ -338,29 +435,105 @@ public class DeviceControlActivity extends Activity {
 
 
     };
+
     static class UUIDParser{
 
-        //HashMap<String,String> batteryUUIDinfo = new HashMap<String, String>();
+        //java.util.HashMap<String, Integer> batteryUUIDinfo = new java.util.HashMap<String, Integer>();
 
+        //Battery power
         static final String BATTERY_SERVICE_UUID = "180f";
         static final String BATTERY_SERVICE_LEVEL_UUID = "2a19";
         static final String BATTERY_CLIENT_CHAR_CONF_UUID= "2902";
         static final String BATTERY_SERVICE_GATT_REPORT_REF_UUID = "2908";
 
-        static public String Parse(String org_uuid){
-            String uuid[] = org_uuid.split("\\-");
+        //Transmitt power
+        static final String TX_PWR_LEVEL_SERVICE_UUID = "1804";
+        static final String PROXIMITY_TX_POWER_LEVEL_UUID = "2a07";
+        static final String PROXIMITY_GATT_CLIENT_CHAR_CFG_UID = "2902";
+
+        //Immediate alert
+        static final String IMMEDIATE_ALERT_SERVICE_UUID = "1802";
+        static final String IMMEDIATE_GATT_CHARACTER_UUID = "2803";
+        static final String IMMEDIATE_PROXIMITY_ALERT_LEVEL_UUID = "2a06";
+
+        //Generic Access
+        static final String GAP_SERVICE_UUID = "1800";
+
+        //Generic Attribute
+        static final String GATT_SERVICE_UUID = "1801";
+
+        //Device Information
+        static final String DEVINFO_SERV_UUID = "180a";
+
+        //Link loss
+        static final String LINK_LOST_SERVICE_UUID = "1803";
+
+        static public String    Parse(UUID input){
+
+            String uuid[] = input.toString().split("\\-");
+            String retval;
+            //Battery
             if(uuid[0].contains(BATTERY_SERVICE_UUID))
-                return "BATTERY_SERVICE_UUID";
+                retval = "BATTERY_SERVICE_UUID";
             else if(uuid[0].contains(BATTERY_SERVICE_LEVEL_UUID))
-                return "BATTERY_SERVICE_LEVEL_UUID";
+                retval = "BATTERY_SERVICE_LEVEL_UUID";
             else if(uuid[0].contains(BATTERY_CLIENT_CHAR_CONF_UUID))
-                return "BATTERY_CLIENT_CHAR_CONF_UUID";
+                retval = "BATTERY_CLIENT_CHAR_CONF_UUID";
             else if(uuid[0].contains(BATTERY_SERVICE_GATT_REPORT_REF_UUID))
-                return "BATTERY_SERVICE_GATT_REPORT_REF_UUID";
-            else
-               return uuid[0];
+                retval = "BATTERY_SERVICE_GATT_REPORT_REF_UUID";
+
+            //TX power
+            else if(uuid[0].contains(TX_PWR_LEVEL_SERVICE_UUID))
+                retval = "TX_PWR_LEVEL_SERVICE_UUID";
+            else if(uuid[0].contains(PROXIMITY_TX_POWER_LEVEL_UUID))
+                retval = "PROXIMITY_TX_POWER_LEVEL_UUID";
+            else if(uuid[0].contains(PROXIMITY_GATT_CLIENT_CHAR_CFG_UID))
+                retval = "PROXIMITY_GATT_CLIENT_CHAR_CFG_UID";
+
+            //Alert
+            else if(uuid[0].contains(IMMEDIATE_ALERT_SERVICE_UUID))
+                retval = "IMMEDIATE_ALERT_SERVICE_UUID";
+            else if(uuid[0].contains(IMMEDIATE_GATT_CHARACTER_UUID))
+                retval = "IMMEDIATE_GATT_CHARACTER_UUID";
+            else if(uuid[0].contains(IMMEDIATE_PROXIMITY_ALERT_LEVEL_UUID))
+                retval = "IMMEDIATE_PROXIMITY_ALERT_LEVEL_UUID";
+
+            //Generic Access
+            else if(uuid[0].contains(GAP_SERVICE_UUID))
+                retval = "GAP_SERVICE_UUID";
+
+            //Generic Attribute
+            else if(uuid[0].contains(GATT_SERVICE_UUID))
+                retval = "GATT_SERVICE_UUID";
+
+            //Device Information
+            else if(uuid[0].contains(DEVINFO_SERV_UUID))
+                retval = "DEVINFO_SERV_UUID";
+
+            //Link loss
+            else if(uuid[0].contains(LINK_LOST_SERVICE_UUID))
+                retval = "LINK_LOST_SERVICE_UUID";
+
+            else {
+                retval = uuid[0].replace("0000", "0x");
+                return retval;
+            }
+            return retval+" ("+uuid[0].replace("0000", "0x")+") ";
 
         }
     }
-
+    private class BLEGenericService{
+        UUID uuid;
+        BLEValue value;
+        List<BLECharacteristic> bleCharacteristics;
+        public String getName(){ return null; };
+    }
+    private class BLEValue{
+        UUID uuid;
+        public String getName(){ return null; };
+    }
+    private class BLECharacteristic{
+        UUID uuid;
+        public String getName(){ return null; };
+    }
 }
