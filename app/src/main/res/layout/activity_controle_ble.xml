@@ -29,6 +29,15 @@
         android:layout_height="wrap_content"
         android:text="@string/disconnect_button"
         android:onClick="disconnectButtonPressed"
-        android:layout_below="@+id/connect_button"/>
+        android:layout_below="@+id/connect_button"
+        android:id="@+id/disconnect_button"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/beep_button"
+        android:onClick="beepButtonPressed"
+        android:layout_below="@+id/disconnect_button"
+        android:id="@+id/beep_button"
+        android:enabled="false"/>
 
 </RelativeLayout>

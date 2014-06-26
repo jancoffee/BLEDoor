@@ -12,4 +12,5 @@
     <string name="empty_ble_adress">empty adres</string>
     <string name="empty_ble_name">empy ble devices name</string>
     <string name="disconnect_button">disconnect</string>
+    <string name="beep_button">beep-it</string>
 </resources>

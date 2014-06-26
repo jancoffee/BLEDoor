@@ -15,10 +15,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Activity to connect and show information about a BLE device
@@ -35,6 +36,8 @@ public class DeviceControlActivity extends Activity {
     private String address;
     private String name;
     private BluetoothGatt bluetoothGatt;
+    private Button beepButton;
+
 
     private enum CONNECTION_STATE {DISCONNECTED,CONNECTING,CONNECTED};
     private CONNECTION_STATE connectionState;
@@ -61,6 +64,9 @@ public class DeviceControlActivity extends Activity {
         //view init
         bleAddressTextView = (TextView)findViewById(R.id.ble_address);
         bleNameTextView = (TextView)findViewById(R.id.ble_name);
+
+        beepButton = (Button)findViewById(R.id.beep_button);
+        beepButton.setEnabled(true);
 
         address = getIntent().getStringExtra(ScanBLEActivity.BLE_ADRESS);
         name = getIntent().getStringExtra(ScanBLEActivity.BLE_NAME);
@@ -120,6 +126,12 @@ public class DeviceControlActivity extends Activity {
 
     }
 
+    //called when beep button pressed
+    public void beepButtonPressed(View view) {
+       gattCallback.beep();
+    }
+
+
     /**
      * Connect using a new or old bluetoothGatt & address
      * */
@@ -148,12 +160,12 @@ public class DeviceControlActivity extends Activity {
         disconnect();
     }
 
-
-    private BluetoothGattCallback gattCallback = new BluetoothGattCallback(){
+    MyBluetoothGattCallback gattCallback = new MyBluetoothGattCallback();
+    private class MyBluetoothGattCallback extends BluetoothGattCallback{
 
         private static final String LOGTAG = "DeviceControlActivity:BluetoothGattCallback";
         public boolean servicesDiscovered = false;
-
+        private BluetoothGatt bluetoothGatt = null;
         /**
          * Callback indicating when GATT client has connected/disconnected to/from a remote
          * GATT server.
@@ -171,12 +183,24 @@ public class DeviceControlActivity extends Activity {
 
             switch (newState){
                 case BluetoothProfile.STATE_CONNECTED:
+                    bluetoothGatt = gatt;
                     connectionState = CONNECTION_STATE.CONNECTED;
                     boolean ok = bluetoothGatt.discoverServices();
+
+                    //Enablar beep button
+                    //FIXME: update button on UI thread!
+                    //beepButton.setEnabled(true);
+
                     Log.d(LOGTAG,"Tried to discover services:"+ok);
                     break;
                 case BluetoothProfile.STATE_DISCONNECTED:
+                    bluetoothGatt = null;
                     connectionState = CONNECTION_STATE.DISCONNECTED;
+
+                    //Disable beep button
+                    //FIXME: update button on UI thread!
+                    //beepButton.setEnabled(false);
+
                     break;
                 default:
                     Log.d(LOGTAG,"unknown connection state status:"+status+ " newState:"+newState);
@@ -312,6 +336,37 @@ public class DeviceControlActivity extends Activity {
                 Log.w(LOGTAG,"onServicesDiscovered got status:"+status);
             }
 
+        }
+
+        public void beep(){
+            readBeep(bluetoothGatt);
+            writeBeep(bluetoothGatt);
+            readBeep(bluetoothGatt);
+        }
+
+        private void readBeep(BluetoothGatt bluetoothGatt) {
+            Log.d(LOGTAG,"readBeep");
+            //00001802-0000-1000-8000-00805f9b34fb
+            final String DEFAULT = "-0000-1000-8000-00805f9b34fb";
+            final String IMMEDIATE_ALERT_SERVICE_UUID = "00001802"+DEFAULT;
+            final String PROXIMITY_ALERT_LEVEL_UUID = "00002a06"+DEFAULT;
+            BluetoothGattService service = bluetoothGatt.getService(UUID.fromString(IMMEDIATE_ALERT_SERVICE_UUID));
+            BluetoothGattCharacteristic characteristic = service.getCharacteristic(UUID.fromString(PROXIMITY_ALERT_LEVEL_UUID));
+            byte [] val = characteristic.getValue();
+            Log.d(LOGTAG,"Read beep value:"+val);
+        }
+
+        private void writeBeep(BluetoothGatt gatt) {
+            Log.d(LOGTAG,"writeBeep");
+            //00001802-0000-1000-8000-00805f9b34fb
+            final String DEFAULT = "-0000-1000-8000-00805f9b34fb";
+            final String IMMEDIATE_ALERT_SERVICE_UUID = "00001802"+DEFAULT;
+            final String PROXIMITY_ALERT_LEVEL_UUID = "00002a06"+DEFAULT;
+            BluetoothGattService service = gatt.getService(UUID.fromString(IMMEDIATE_ALERT_SERVICE_UUID));
+            BluetoothGattCharacteristic characteristic = service.getCharacteristic(UUID.fromString(PROXIMITY_ALERT_LEVEL_UUID));
+            //descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+            characteristic.setValue(new byte[] {0x01} );
+            gatt.writeCharacteristic(characteristic);
         }
 
         /**
