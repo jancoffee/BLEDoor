@@ -131,6 +131,10 @@ public class DeviceControlActivity extends Activity {
        gattCallback.beep();
     }
 
+    //called when beep button pressed
+    public void batteryButtonPressed(View view) {
+        gattCallback.readBatteryLevel();
+    }
 
     /**
      * Connect using a new or old bluetoothGatt & address
@@ -388,6 +392,23 @@ public class DeviceControlActivity extends Activity {
             readBeep(bluetoothGatt);
             writeBeep(bluetoothGatt);
             readBeep(bluetoothGatt);
+        }
+
+        public void readBatteryLevel(){
+            readBatteryLevel(bluetoothGatt);
+        }
+
+
+        private void readBatteryLevel(BluetoothGatt bluetoothGatt) {
+            Log.d(LOGTAG,"readBatteryLevel");
+            //00001802-0000-1000-8000-00805f9b34fb
+            final String DEFAULT = "-0000-1000-8000-00805f9b34fb";
+            final String BATTERY_SERVICE_UUID = "0000180f"+DEFAULT;
+            final String BATTERY_LEVEL_UUID = "00002a19"+DEFAULT;
+            BluetoothGattService service = bluetoothGatt.getService(UUID.fromString(BATTERY_SERVICE_UUID));
+            BluetoothGattCharacteristic characteristic = service.getCharacteristic(UUID.fromString(BATTERY_LEVEL_UUID));
+            boolean couldRead = bluetoothGatt.readCharacteristic(characteristic);
+            Log.d(LOGTAG,"readBatteryLevel couldRead:"+couldRead);
         }
 
         private void readBeep(BluetoothGatt bluetoothGatt) {

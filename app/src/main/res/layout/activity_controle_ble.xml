@@ -40,4 +40,13 @@
         android:id="@+id/beep_button"
         android:enabled="false"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/battery_button"
+        android:onClick="batteryButtonPressed"
+        android:layout_below="@+id/beep_button"
+        android:id="@+id/battery_button"
+        />
+
 </RelativeLayout>
