@@ -208,13 +208,60 @@ public class DeviceControlActivity extends Activity {
 
         }
 
+        private String byte2String(byte[] arr, int format){
+            String retVal;
+            switch (format){
+                case BluetoothGattCharacteristic.FORMAT_FLOAT:
+                    retVal = "-1";
+                    break;
+                case BluetoothGattCharacteristic.FORMAT_SFLOAT:
+                    retVal = "-1";
+                    break;
+                case BluetoothGattCharacteristic.FORMAT_SINT16:
+                    retVal = "-1";
+                    break;
+                case BluetoothGattCharacteristic.FORMAT_SINT32:
+                    retVal = "-1";
+                    break;
+                case BluetoothGattCharacteristic.FORMAT_SINT8:
+                    retVal = "-1";
+                    break;
+                case BluetoothGattCharacteristic.FORMAT_UINT16:
+                    //TODO fix a better way to konv.
+                    final String  digits = "0123456789abcdef";
+                    StringBuffer buf = new StringBuffer();
+
+                    for (int i = 0; i != arr.length; i++)
+                    {
+                        int v = arr[i] & 0xff;
+
+                        buf.append(digits.charAt(v >> 4));
+                        buf.append(digits.charAt(v & 0xf));
+                    }
+                    retVal = buf.toString();
+
+                    break;
+                case BluetoothGattCharacteristic.FORMAT_UINT32:
+                    retVal = "-1";
+                    break;
+                case BluetoothGattCharacteristic.FORMAT_UINT8:
+                    retVal = "-1";
+                    break;
+                default:
+                    retVal = "-2";
+                    break;
+            }
+            return retVal;
+
+        }
+
 
         //read a BluetoothGattCharacteristic Properties
         private void readCharacteristicProperties(final int properties, BluetoothGattCharacteristic characteristic){
             Log.d(LOGTAG,"Characteristic properties:"+ properties );
             int format = 0;
-            /*
-            switch (properties & 0x01){
+
+            switch (properties){
                 case BluetoothGattCharacteristic.FORMAT_FLOAT:
                     Log.d(LOGTAG,"FORMAT_FLOAT");
                     break;
@@ -232,6 +279,9 @@ public class DeviceControlActivity extends Activity {
                     break;
                 case BluetoothGattCharacteristic.FORMAT_UINT16:
                     Log.d(LOGTAG,"FORMAT_UINT16");
+                    //Log.d(LOGTAG,"characteristic value is:"+byte2String(characteristic.getValue(),BluetoothGattCharacteristic.FORMAT_UINT16));
+                    byte value[] = characteristic.getValue();
+                    Log.d(LOGTAG,"characteristic value is:"+value[0]);
                     break;
                 case BluetoothGattCharacteristic.FORMAT_UINT32:
                     Log.d(LOGTAG,"FORMAT_UINT32");
@@ -243,58 +293,52 @@ public class DeviceControlActivity extends Activity {
                     Log.d(LOGTAG,"unknown properties:"+properties);
                     break;
             }
-
+            /*
 //            if ((properties & 0x01) != 0) {
             if ((properties & BluetoothGattCharacteristic.FORMAT_FLOAT) != 0) {
                 format = BluetoothGattCharacteristic.FORMAT_FLOAT;
                 Log.d(LOGTAG, "Heart rate format FORMAT_FLOAT.");
-                //final int heartRate = characteristic.getIntValue(format, 1);
-                //Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
+                final float heartRate = characteristic.getFloatValue(format, 1);
+                Log.d(LOGTAG, String.format("Received heart rate: %f", heartRate));
             } else if((properties & BluetoothGattCharacteristic.FORMAT_SFLOAT) != 0) {
                 format = BluetoothGattCharacteristic.FORMAT_SFLOAT;
                 Log.d(LOGTAG, "Heart rate format FORMAT_SFLOAT.");
-                //final int heartRate = characteristic.getIntValue(format, 1);
-                //Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
+                final float heartRate = characteristic.getFloatValue(format, 1);
+                Log.d(LOGTAG, String.format("Received heart rate: %f", heartRate));
             } else if((properties & BluetoothGattCharacteristic.FORMAT_SINT16) != 0) {
                 format = BluetoothGattCharacteristic.FORMAT_SINT16;
                 Log.d(LOGTAG, "Heart rate format FORMAT_SINT16.");
-                //final int heartRate = characteristic.getIntValue(format, 1);
-                //Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
+                final int heartRate = characteristic.getIntValue(format, 1);
+                Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
             } else if((properties & BluetoothGattCharacteristic.FORMAT_SINT32) != 0) {
                 format = BluetoothGattCharacteristic.FORMAT_SINT32;
                 Log.d(LOGTAG, "Heart rate format FORMAT_SINT32.");
-                //final int heartRate = characteristic.getIntValue(format, 1);
-                //Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
+                final int heartRate = characteristic.getIntValue(format, 1);
+                Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
             } else if((properties & BluetoothGattCharacteristic.FORMAT_SINT8) != 0) {
                 format = BluetoothGattCharacteristic.FORMAT_SINT8;
                 Log.d(LOGTAG, "Heart rate format FORMAT_SINT8");
-                //final int heartRate = characteristic.getIntValue(format, 1);
-                //Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
+                final int heartRate = characteristic.getIntValue(format, 1);
+                Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
             } else if((properties & BluetoothGattCharacteristic.FORMAT_UINT16) != 0) {
                 format = BluetoothGattCharacteristic.FORMAT_UINT16;
                 Log.d(LOGTAG, "Heart rate format FORMAT_UINT16");
-                //final int heartRate = characteristic.getIntValue(format, 1);
-                //Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
+                final int heartRate = characteristic.getIntValue(format, 1);
+                Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
             } else if((properties & BluetoothGattCharacteristic.FORMAT_UINT32) != 0) {
                 format = BluetoothGattCharacteristic.FORMAT_UINT32;
                 Log.d(LOGTAG, "Heart rate format FORMAT_UINT32");
-                //final int heartRate = characteristic.getIntValue(format, 1);
-                //Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
+                final int heartRate = characteristic.getIntValue(format, 1);
+                Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
             } else if((properties & BluetoothGattCharacteristic.FORMAT_UINT8) != 0) {
                 format = BluetoothGattCharacteristic.FORMAT_UINT8;
                 Log.d(LOGTAG, "Heart rate format FORMAT_UINT8");
-                //final int heartRate = characteristic.getIntValue(format, 1);
-                //Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
+                final int heartRate = characteristic.getIntValue(format, 1);
+                Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
             } else{
                 Log.d(LOGTAG, "Unknown properties format."+properties);
-
             }
-
             */
-            if(characteristic.getValue()!=null) {
-                Log.d(LOGTAG, "Characteristic getvalue:" + characteristic.getValue().toString());
-            }
-
         }
 
         /**
@@ -318,13 +362,15 @@ public class DeviceControlActivity extends Activity {
                         Log.d(LOGTAG,"Characteristic found Uuid:"+UUIDParser.Parse(characteristic.getUuid()));
                         Log.d(LOGTAG,"Characteristic permissions:"+ characteristic.getPermissions());
 
-                        readCharacteristicProperties(characteristic.getProperties(), characteristic);
-
+                        //TODO enable? services
+                        //TODO enable? notifications services
                         for(BluetoothGattDescriptor descriptor : characteristic.getDescriptors() ){
                             Log.d(LOGTAG,"BluetoothGattDescriptor found Uuid:"+UUIDParser.Parse(descriptor.getUuid()));
                             Log.d(LOGTAG,"BluetoothGattDescriptor permissions:"+ descriptor.getPermissions());
 
                             if(descriptor.getValue()!=null)
+                                Log.d(LOGTAG,"BluetoothGattDescriptor getvalue: 0x00");
+                            else
                                 Log.d(LOGTAG,"BluetoothGattDescriptor getvalue:" + descriptor.getValue());
 
                         }
@@ -352,8 +398,8 @@ public class DeviceControlActivity extends Activity {
             final String PROXIMITY_ALERT_LEVEL_UUID = "00002a06"+DEFAULT;
             BluetoothGattService service = bluetoothGatt.getService(UUID.fromString(IMMEDIATE_ALERT_SERVICE_UUID));
             BluetoothGattCharacteristic characteristic = service.getCharacteristic(UUID.fromString(PROXIMITY_ALERT_LEVEL_UUID));
-            byte [] val = characteristic.getValue();
-            Log.d(LOGTAG,"Read beep value:"+val);
+            boolean couldRead = bluetoothGatt.readCharacteristic(characteristic);
+            Log.d(LOGTAG,"readBeep couldRead:"+couldRead);
         }
 
         private void writeBeep(BluetoothGatt gatt) {
@@ -381,7 +427,8 @@ public class DeviceControlActivity extends Activity {
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic,int status) {
             Log.d(LOGTAG,"onCharacteristicRead status:"+status + " UUID:"+characteristic.getUuid());
-
+            Log.d(LOGTAG,"onCharacteristicRead read value:"+characteristic.getValue());
+            readCharacteristicProperties(characteristic.getProperties(),characteristic);
 
         }
 
