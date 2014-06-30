@@ -14,4 +14,10 @@
     <string name="disconnect_button">disconnect</string>
     <string name="beep_button">beep-it</string>
     <string name="battery_button">read battery</string>
+    <string name="title_activity_save_device">SaveDevice</string>
+    <string name="add_new_door">Add a new door</string>
+    <string name="device_desc_title">Device desc</string>
+    <string name="device_info">device information from device</string>
+    <string name="device_info_title">Device Title</string>
+
 </resources>
