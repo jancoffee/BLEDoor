@@ -23,8 +23,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-
-
+/**
+ * This Activity can scan device and show them in a select able list,
+ * user can select a device to save it.
+ * */
 public class ScanBLEActivity extends Activity {
 
     public static final String BLE_ADRESS = "BLE_ADRESS";
@@ -252,7 +254,7 @@ public class ScanBLEActivity extends Activity {
             //setting the device_info to the listview obj
             final String deviceName = device.address;
             if (deviceName != null && deviceName.length() > 0)
-                address.setText(deviceName);
+                address.setText("Proofdoor\n(" +deviceName+")");
             else
                 address.setText(R.string.unknown_device);
 
