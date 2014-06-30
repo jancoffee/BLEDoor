@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -29,8 +30,8 @@ import java.util.ArrayList;
  * */
 public class ScanBLEActivity extends Activity {
 
-    public static final String BLE_ADRESS = "BLE_ADRESS";
-    public static final String BLE_NAME = "BLE_NAME";
+    public static final String BLE_DEVICE_ADRESS = "BLE_DEVICE_ADRESS";
+    public static final String BLE_DEVIE_NAME = "BLE_DEVIE_NAME";
     final String LOGTAG = "ScanBLEActivity";
     private BluetoothAdapter bluetoothAdapter = null;
     private Handler handler;
@@ -91,9 +92,9 @@ public class ScanBLEActivity extends Activity {
 
                 //send the info in a Intent to a start a activity
                 //fixme: make this a application local intent!
-                Intent startControlActivity = new Intent(getApplicationContext(),DeviceControlActivity.class);
-                startControlActivity.putExtra(BLE_ADRESS, address);
-                startControlActivity.putExtra(BLE_NAME, name);
+                Intent startControlActivity = new Intent(getApplicationContext(),SaveDevice.class);
+                startControlActivity.putExtra(BLE_DEVICE_ADRESS, address);
+                startControlActivity.putExtra(BLE_DEVIE_NAME, name);
                 startActivity(startControlActivity);
             }
         });
@@ -259,6 +260,8 @@ public class ScanBLEActivity extends Activity {
                 address.setText(R.string.unknown_device);
 
             rssi.setText(String.valueOf(device.rssi));
+
+            convertView.setBackgroundColor(Color.rgb(150,150,150));
 
             return convertView;
 

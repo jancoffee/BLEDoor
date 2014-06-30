@@ -57,8 +57,8 @@ public class SaveDevice extends Activity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log.d(LOGTAG, "onNewIntent intent:" + intent.toString());
-        deviceAddress = intent.getStringExtra(ScanBLEActivity.BLE_ADRESS);
-        deviceName = intent.getStringExtra(ScanBLEActivity.BLE_NAME);
+        deviceAddress = intent.getStringExtra(ScanBLEActivity.BLE_DEVICE_ADRESS);
+        deviceName = intent.getStringExtra(ScanBLEActivity.BLE_DEVIE_NAME);
     }
 
     //executes when the save button is pressed
@@ -66,8 +66,8 @@ public class SaveDevice extends Activity {
         Log.d(LOGTAG,"saveDeviceButtonClicked");
         //send an intent that start the swipe view
         Intent startActivity = new Intent("");
-        startActivity.putExtra("DEVICE_NAME",deviceName);
-        startActivity.putExtra("DEVICE_DESC",deviceAddress);
+        startActivity.putExtra(ScanBLEActivity.BLE_DEVIE_NAME,deviceName);
+        startActivity.putExtra(ScanBLEActivity.BLE_DEVICE_ADRESS,deviceAddress);
 
         startActivity(startActivity);
     }

@@ -69,8 +69,8 @@ public class DeviceControlActivity extends Activity {
         beepButton = (Button)findViewById(R.id.beep_button);
         beepButton.setEnabled(true);
 
-        address = getIntent().getStringExtra(ScanBLEActivity.BLE_ADRESS);
-        name = getIntent().getStringExtra(ScanBLEActivity.BLE_NAME);
+        address = getIntent().getStringExtra(ScanBLEActivity.BLE_DEVICE_ADRESS);
+        name = getIntent().getStringExtra(ScanBLEActivity.BLE_DEVIE_NAME);
 
     }
 
@@ -79,8 +79,8 @@ public class DeviceControlActivity extends Activity {
         super.onNewIntent(intent);
         Log.d(LOGTAG, "onNewIntent intent:"+intent.toString());
 
-        address = intent.getStringExtra(ScanBLEActivity.BLE_ADRESS);
-        name = intent.getStringExtra(ScanBLEActivity.BLE_NAME);
+        address = intent.getStringExtra(ScanBLEActivity.BLE_DEVICE_ADRESS);
+        name = intent.getStringExtra(ScanBLEActivity.BLE_DEVIE_NAME);
     }
 
     @Override
