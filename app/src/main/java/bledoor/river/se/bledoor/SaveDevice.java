@@ -35,7 +35,12 @@ public class SaveDevice extends Activity {
         setContentView(R.layout.activity_save_device);
         deviceInfoText =  (TextView)findViewById(R.id.device_info_text);
         deviceDesc = (EditText)findViewById(R.id.device_desc);
-
+        Intent intent = getIntent();
+        if(intent != null){
+            deviceName = intent.getStringExtra(ScanBLEActivity.BLE_DEVIE_NAME);
+            deviceAddress = intent.getStringExtra(ScanBLEActivity.BLE_DEVICE_ADRESS);
+        }else
+            Log.w(LOGTAG,"couldn't find a start intent information");
     }
 
     @Override
@@ -65,7 +70,7 @@ public class SaveDevice extends Activity {
     public void saveDeviceButtonClicked(View view) {
         Log.d(LOGTAG,"saveDeviceButtonClicked");
         //send an intent that start the swipe view
-        Intent startActivity = new Intent("");
+        Intent startActivity = new Intent(this,IntroActivity.class);
         startActivity.putExtra(ScanBLEActivity.BLE_DEVIE_NAME,deviceName);
         startActivity.putExtra(ScanBLEActivity.BLE_DEVICE_ADRESS,deviceAddress);
 

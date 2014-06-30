@@ -19,5 +19,8 @@
     <string name="device_desc_title">Device desc</string>
     <string name="device_info">device information from device</string>
     <string name="device_info_title">Device Title</string>
+    <string name="title_section1">title_section1</string>
+    <string name="title_section2">title_section2</string>
+    <string name="title_section3">title_section3</string>
 
 </resources>
