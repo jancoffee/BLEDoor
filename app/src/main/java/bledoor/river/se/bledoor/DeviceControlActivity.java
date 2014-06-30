@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -304,43 +305,6 @@ public class DeviceControlActivity extends Activity {
                 Log.d(LOGTAG, "Heart rate format FORMAT_FLOAT.");
                 final float heartRate = characteristic.getFloatValue(format, 1);
                 Log.d(LOGTAG, String.format("Received heart rate: %f", heartRate));
-            } else if((properties & BluetoothGattCharacteristic.FORMAT_SFLOAT) != 0) {
-                format = BluetoothGattCharacteristic.FORMAT_SFLOAT;
-                Log.d(LOGTAG, "Heart rate format FORMAT_SFLOAT.");
-                final float heartRate = characteristic.getFloatValue(format, 1);
-                Log.d(LOGTAG, String.format("Received heart rate: %f", heartRate));
-            } else if((properties & BluetoothGattCharacteristic.FORMAT_SINT16) != 0) {
-                format = BluetoothGattCharacteristic.FORMAT_SINT16;
-                Log.d(LOGTAG, "Heart rate format FORMAT_SINT16.");
-                final int heartRate = characteristic.getIntValue(format, 1);
-                Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
-            } else if((properties & BluetoothGattCharacteristic.FORMAT_SINT32) != 0) {
-                format = BluetoothGattCharacteristic.FORMAT_SINT32;
-                Log.d(LOGTAG, "Heart rate format FORMAT_SINT32.");
-                final int heartRate = characteristic.getIntValue(format, 1);
-                Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
-            } else if((properties & BluetoothGattCharacteristic.FORMAT_SINT8) != 0) {
-                format = BluetoothGattCharacteristic.FORMAT_SINT8;
-                Log.d(LOGTAG, "Heart rate format FORMAT_SINT8");
-                final int heartRate = characteristic.getIntValue(format, 1);
-                Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
-            } else if((properties & BluetoothGattCharacteristic.FORMAT_UINT16) != 0) {
-                format = BluetoothGattCharacteristic.FORMAT_UINT16;
-                Log.d(LOGTAG, "Heart rate format FORMAT_UINT16");
-                final int heartRate = characteristic.getIntValue(format, 1);
-                Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
-            } else if((properties & BluetoothGattCharacteristic.FORMAT_UINT32) != 0) {
-                format = BluetoothGattCharacteristic.FORMAT_UINT32;
-                Log.d(LOGTAG, "Heart rate format FORMAT_UINT32");
-                final int heartRate = characteristic.getIntValue(format, 1);
-                Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
-            } else if((properties & BluetoothGattCharacteristic.FORMAT_UINT8) != 0) {
-                format = BluetoothGattCharacteristic.FORMAT_UINT8;
-                Log.d(LOGTAG, "Heart rate format FORMAT_UINT8");
-                final int heartRate = characteristic.getIntValue(format, 1);
-                Log.d(LOGTAG, String.format("Received heart rate: %d", heartRate));
-            } else{
-                Log.d(LOGTAG, "Unknown properties format."+properties);
             }
             */
         }
@@ -356,6 +320,8 @@ public class DeviceControlActivity extends Activity {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             Log.d(LOGTAG,"onServicesDiscovered status:"+status);
+            HashMap<String,String> dd = new HashMap<String,String>();
+            dd.put("","");
             if(status == BluetoothGatt.GATT_SUCCESS){
                 //All ok, do stuff
                 servicesDiscovered = true;
