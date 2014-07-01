@@ -52,6 +52,13 @@ public class SaveDevice extends Activity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(LOGTAG,"onPause");
+        finish();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.save_device, menu);

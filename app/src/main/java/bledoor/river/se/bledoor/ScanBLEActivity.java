@@ -109,6 +109,7 @@ public class ScanBLEActivity extends Activity {
         bleListView.setAdapter(null);
         bleDeviceses.clear();
         bleDeviceses = null;
+        finish();
 
     }
 
