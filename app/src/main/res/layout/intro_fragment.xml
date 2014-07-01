@@ -49,5 +49,14 @@
         android:layout_centerHorizontal="true"
         android:background="@drawable/open_btn_green"
         android:visibility="invisible"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rssi_value"
+        android:layout_below="@id/open_button"
+        android:layout_centerHorizontal="true"
+        android:textSize="15sp"
+        android:text="rssi"
+        android:textColor="@android:color/white"/>
 
 </RelativeLayout>

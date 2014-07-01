@@ -218,6 +218,7 @@ public class IntroActivity extends Activity {
         private int id;
         private View rootView;
         private BluetoothAdapter bluetoothAdapter;
+        private TextView rssiValue;
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -257,6 +258,8 @@ public class IntroActivity extends Activity {
                     openDoor();
                 }
             });
+
+            rssiValue = (TextView)rootView.findViewById(R.id.rssi_value);
 
             return rootView;
 
@@ -348,10 +351,34 @@ public class IntroActivity extends Activity {
             }
         }
 
+        private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
+            @Override
+            public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String deviceStr = "Found a device named:"+device.getName()+
+                                "\ntoString:"+device.toString()+
+                                "\nBluetoothClass:"+device.getBluetoothClass().toString()+
+                                "\nAddress:"+device.getAddress()+
+                                "\nrssi:"+rssi;
+                        Log.d(LOGTAG, deviceStr);
+                        if(bleDeviceAddress != null && bleDeviceAddress.equals(device.getAddress())){
+                            Log.d(LOGTAG,"MATCHED ADDRESS rssiValue:"+rssiValue);
+                            rssiValue.setText(String.valueOf(rssi));
+                        }
+                    }
+                });
+            }
+        };
 
 
         public void connect(String address) {
             Log.d(LOGTAG, "connect to id "+id+" address:" + address);
+            //disable ble scan
+            if(bluetoothAdapter!=null)
+                bluetoothAdapter.stopLeScan(mLeScanCallback);
+
             // Previously connected device.  Try to reconnect.
             /*
             if (bleDeviceAddress.equals(address) && bluetoothGatt != null) {
@@ -399,6 +426,9 @@ public class IntroActivity extends Activity {
             }
             enableConnectButton(false);
 
+            //start ble scan
+            if(bluetoothAdapter!=null)
+                bluetoothAdapter.startLeScan(mLeScanCallback);
         }
 
         @Override
