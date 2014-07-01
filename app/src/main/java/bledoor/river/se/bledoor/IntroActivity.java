@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class IntroActivity extends Activity {
 
@@ -148,6 +149,7 @@ public class IntroActivity extends Activity {
     //called when the addDoorClick button is clicked
     public void settingsClick(View view){
         Log.d(LOGTAG,"settingsClick");
+        Toast.makeText(this,"Sorry, Not implemented yet",Toast.LENGTH_SHORT).show();
         //Intent intent = new Intent(this,SettingsActivity.class);
         //startActivity(intent);
     }
@@ -298,12 +300,9 @@ public class IntroActivity extends Activity {
                     @Override
                     public void run() {
                         openButton.setEnabled(true);
-
+                        openButton.setBackgroundResource(R.drawable.open_btn_green);
                         openButton.setVisibility(View.VISIBLE);
                         openButton.invalidate();
-//                        invalidate();
-//                        findViewById(android.R.id.content).invalidate();
-
                     }
                 });
             }
@@ -313,27 +312,43 @@ public class IntroActivity extends Activity {
                     @Override
                     public void run() {
                         openButton.setEnabled(false);
-
-                        openButton.setVisibility(View.INVISIBLE);
+                        openButton.setBackgroundResource(R.drawable.open_btn_non_green);
+                        openButton.setVisibility(View.VISIBLE);
                         openButton.invalidate();
-//                        findViewById(android.R.id.content).invalidate();
-//                        invalidate();
-//                        rootView.invalidate();
                     }
                 });
             }
-
         }
 
-        public void invalidate() {
-            openButton.post(new Runnable() {
-                //http://stackoverflow.com/questions/12705342/refreshing-a-view-inside-a-fragment
-                @Override
-                public void run() {
-                    openButton.invalidate();
-                }
-            });
+        //Enable or disable the connect button, Thread safe
+        private void hideConnectButton(boolean hide){
+            Log.d(LOGTAG,"hideConnectButton enable:"+hide+" isActive:"+openButton.isActivated());
+            //hide button
+            if(hide) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        openButton.setEnabled(false);
+                        openButton.setVisibility(View.INVISIBLE);
+                        openButton.invalidate();
+
+                    }
+                });
+            }
+            //unhide button
+            else{
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        openButton.setEnabled(true);
+                        openButton.setVisibility(View.VISIBLE);
+                        openButton.invalidate();
+                    }
+                });
+            }
         }
+
+
 
         public void connect(String address) {
             Log.d(LOGTAG, "connect to id "+id+" address:" + address);
