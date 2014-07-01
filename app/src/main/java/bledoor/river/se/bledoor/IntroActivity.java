@@ -298,11 +298,11 @@ public class IntroActivity extends Activity {
                     @Override
                     public void run() {
                         openButton.setEnabled(true);
-                        //openButton.setAlpha(1.0f);
+
                         openButton.setVisibility(View.VISIBLE);
                         openButton.invalidate();
-                        invalidate();
-                        findViewById(android.R.id.content).invalidate();
+//                        invalidate();
+//                        findViewById(android.R.id.content).invalidate();
 
                     }
                 });
@@ -313,12 +313,12 @@ public class IntroActivity extends Activity {
                     @Override
                     public void run() {
                         openButton.setEnabled(false);
-                        //openButton.setAlpha(0.0f);
+
                         openButton.setVisibility(View.INVISIBLE);
                         openButton.invalidate();
-                        findViewById(android.R.id.content).invalidate();
-                        invalidate();
-                        rootView.invalidate();
+//                        findViewById(android.R.id.content).invalidate();
+//                        invalidate();
+//                        rootView.invalidate();
                     }
                 });
             }
