@@ -1,21 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <!-- Device name -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/ble_item_address"
+        android:id="@+id/ble_item_name"
         android:textSize="20dp"
-        android:text="no device"
-        android:layout_margin="10dp" />
+        android:text="device name"
+        android:layout_margin="5dp"/>
+    <!-- Device Address -->
+    <TextView
+        android:paddingLeft="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ble_item_device"
+        android:textSize="20dp"
+        android:text="device address"
+        android:layout_below="@+id/ble_item_name"
+        android:layout_alignStart="@+id/ble_item_name"/>
+    <!-- Connect -->
+    <TextView
+        android:paddingLeft="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ble_item_connect"
+        android:textSize="20dp"
+        android:text="Connect"
+        android:textColor="@android:color/black"
+        android:layout_above="@+id/ble_item_rssi_level"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="10dp"/>
+    <!-- RSSI -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ble_item_rssi_level"
         android:textSize="20dp"
         android:text="no rssi"
-        android:layout_margin="10dp" />
+        android:layout_below="@+id/ble_item_device"
+        android:layout_alignStart="@+id/ble_item_device" />
 
-</LinearLayout>
+</RelativeLayout>

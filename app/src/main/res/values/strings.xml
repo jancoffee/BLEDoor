@@ -4,24 +4,26 @@
     <string name="app_name">ProofDoor</string>
     <string name="action_settings">Settings</string>
     <string name="ble_not_supported">This device does not support BLE</string>
-    <string name="start_scan_ble_button_text">Start Scan for a BLE device</string>
-    <string name="stop_scan_ble_button_text">Stop Scan for a BLE device</string>
+    <string name="start_scan_ble_button_text">Start Scan</string>
+    <string name="stop_scan_ble_button_text">Stop Scan</string>
     <string name="unknown_device">unknown device</string>
     <string name="connect_button">connect</string>
-    <string name="empty_ble_adress">empty adres</string>
+    <string name="empty_ble_adress">empty address</string>
     <string name="empty_ble_name">empy ble devices name</string>
     <string name="disconnect_button">disconnect</string>
     <string name="beep_button">beep-it</string>
     <string name="battery_button">read battery</string>
     <string name="title_activity_save_device">SaveDevice</string>
     <string name="add_new_door">Add a new door</string>
-    <string name="device_desc_title">Device desc</string>
-    <string name="device_info">device information from device</string>
-    <string name="device_info_title">Device Title</string>
+    <string name="device_desc_title">Door description</string>
+    <string name="device_info">information from device</string>
+    <string name="device_info_title">Door Title</string>
     <string name="title_section1">title_section1</string>
     <string name="title_section2">title_section2</string>
     <string name="title_section3">title_section3</string>
     <string name="version_name">date:2014-07-01</string>
     <string name="version_code">1.0</string>
+    <string name="scan_add_devices_found">Doors found:</string>
+    <string name="intro_fragment_headline">Garage door</string>
 
 </resources>

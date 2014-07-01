@@ -247,23 +247,34 @@ public class ScanBLEActivity extends Activity {
             }
 
             //Getting the field in the listview obj
-            TextView address = (TextView) convertView.findViewById(R.id.ble_item_address);
+            TextView deviceName = (TextView) convertView.findViewById(R.id.ble_item_name);
+            TextView deviceAddress = (TextView) convertView.findViewById(R.id.ble_item_device);
             TextView rssi = (TextView) convertView.findViewById(R.id.ble_item_rssi_level);
 
             //get the device_info from "datasource"
             BLEDeviceInfo device = bleDeviceses.get(position);
 
-            //setting the device_info to the listview obj
-            final String deviceName = device.address;
-            if (deviceName != null && deviceName.length() > 0)
-                address.setText("Proofdoor\n(" +deviceName+")");
+            //setting the device_name
+            //final String address = device.description;
+            //if (address != null && address.length() > 0)
+                deviceName.setText("Proofdoor");
+            //else
+            //    deviceName.setText(R.string.unknown_device);
+
+            //setting the device_address
+            final String address = device.address;
+            if (address != null && address.length() > 0)
+                deviceAddress.setText(address);
             else
-                address.setText(R.string.unknown_device);
+                deviceAddress.setText(R.string.unknown_device);
 
-            rssi.setText(String.valueOf(device.rssi));
+            rssi.setText("rssi:" + String.valueOf(device.rssi));
 
-            convertView.setBackgroundColor(Color.rgb(150,150,150));
-
+            //setting the colors
+            convertView.setBackgroundColor(Color.rgb(228, 228, 228));
+            deviceName.setTextColor(Color.BLACK);
+            deviceAddress.setTextColor(Color.BLACK);
+            rssi.setTextColor(Color.BLACK);
             return convertView;
 
         }
