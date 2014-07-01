@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">BLEDoor</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">ProofDoor</string>
     <string name="action_settings">Settings</string>
     <string name="ble_not_supported">This device does not support BLE</string>
     <string name="start_scan_ble_button_text">Start Scan for a BLE device</string>
@@ -22,5 +21,7 @@
     <string name="title_section1">title_section1</string>
     <string name="title_section2">title_section2</string>
     <string name="title_section3">title_section3</string>
+    <string name="version_name">date:2014-07-01</string>
+    <string name="version_code">1.0</string>
 
 </resources>

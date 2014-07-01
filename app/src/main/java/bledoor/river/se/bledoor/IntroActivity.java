@@ -102,6 +102,9 @@ public class IntroActivity extends Activity {
             }
         });
 
+        //adding application info to log
+        Log.d(LOGTAG,"Version code:"+getResources().getString(R.string.version_code));
+        Log.d(LOGTAG,"Version name:"+getResources().getString(R.string.version_name));
     }
 
     @Override
