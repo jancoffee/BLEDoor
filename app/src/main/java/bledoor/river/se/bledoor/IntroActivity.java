@@ -19,6 +19,7 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -39,7 +40,7 @@ public class IntroActivity extends Activity {
 
 
     private static final int NR_OF_PAGES = 3;
-    private static final String LOGTAG = "IntroActivity";
+    private final String LOGTAG = "IntroActivity";
     private static final int REQUEST_ENABLE_BT = 1;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -58,8 +59,6 @@ public class IntroActivity extends Activity {
 
     private String bleDeviceAddress;
     private String bleDeviceName;
-
-    private BluetoothAdapter bluetoothAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,24 +101,6 @@ public class IntroActivity extends Activity {
             }
         });
 
-        bleInit();
-
-    }
-
-    private void bleInit() {
-        //BLE init
-        // Initializes Bluetooth adapter.
-        final BluetoothManager bluetoothManager =
-                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        bluetoothAdapter = bluetoothManager.getAdapter();
-        // Ensures Bluetooth is available on the device and it is enabled. If not,
-        // displays a dialog requesting user permission to enable Bluetooth.
-        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
-            Log.d(LOGTAG, "Enablar bluetooth");
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
-
     }
 
     @Override
@@ -132,6 +113,7 @@ public class IntroActivity extends Activity {
     protected void onPause() {
         super.onPause();
         Log.d(LOGTAG,"onPause");
+
     }
 
     @Override
@@ -225,11 +207,15 @@ public class IntroActivity extends Activity {
      */
     public class PlaceholderFragment extends Fragment {
 
+        private final String LOGTAG = "IntroActivity:PlaceholderFragment";
         private BluetoothAdapter bleAdapter;
 
         private ImageButton openButton;
         private BluetoothGatt bluetoothGatt;
-
+        Handler handler;
+        private int id;
+        private View rootView;
+        private BluetoothAdapter bluetoothAdapter;
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -248,23 +234,25 @@ public class IntroActivity extends Activity {
         */
         public PlaceholderFragment() {
             Log.d(LOGTAG,"PlaceholderFragment");
+            handler = new Handler();
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
             Log.d(LOGTAG,"onCreateView");
-            int id = getArguments().getInt(ARG_SECTION_NUMBER,-1);
+            id = getArguments().getInt(ARG_SECTION_NUMBER,-1);
 
-            View rootView = inflater.inflate(R.layout.intro_fragment, container, false);
+            rootView = inflater.inflate(R.layout.intro_fragment, container, false);
 
             openButton = (ImageButton)rootView.findViewById(R.id.open_button);
-            openButton.setEnabled(true);
-            openButton.setAlpha(0.9f);
             openButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d(LOGTAG, "onClick");
-                    connect(((IntroActivity)getActivity()).getBleDeviceAddress());
+                    Log.d(LOGTAG, "onClick isActivated"+v.isEnabled());
+                    if( !v.isEnabled() )
+                        return;
+
+                    openDoor();
                 }
             });
 
@@ -272,8 +260,83 @@ public class IntroActivity extends Activity {
 
         }
 
-        private void connect(String address) {
-            Log.d(LOGTAG,"connect to address:"+address);
+        @Override
+        public void onPause() {
+            super.onDestroy();
+            Log.d(LOGTAG,"onDestroy");
+            disconnect();
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            Log.d(LOGTAG,"onResume");
+            String address = ((IntroActivity)getActivity()).getBleDeviceAddress();
+            if(address != null && address.length() > 0)
+                connect(address);
+        }
+
+        private void openDoor() {
+            Log.d(LOGTAG, "openDoor");
+            gattCallback.beep();
+            //set disconnect timer
+
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    disconnect();
+                }
+            },1000*3);
+
+        }
+
+        //Enable or disable the connect button, Thread safe
+        private void enableConnectButton(boolean enable){
+            Log.d(LOGTAG,"enableConnectButton enable:"+enable+" isActive:"+openButton.isActivated());
+            if(enable) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        openButton.setEnabled(true);
+                        //openButton.setAlpha(1.0f);
+                        openButton.setVisibility(View.VISIBLE);
+                        openButton.invalidate();
+                        invalidate();
+                        findViewById(android.R.id.content).invalidate();
+
+                    }
+                });
+            }
+            //disable button
+            else{
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        openButton.setEnabled(false);
+                        //openButton.setAlpha(0.0f);
+                        openButton.setVisibility(View.INVISIBLE);
+                        openButton.invalidate();
+                        findViewById(android.R.id.content).invalidate();
+                        invalidate();
+                        rootView.invalidate();
+                    }
+                });
+            }
+
+        }
+
+        public void invalidate() {
+            openButton.post(new Runnable() {
+                //http://stackoverflow.com/questions/12705342/refreshing-a-view-inside-a-fragment
+                @Override
+                public void run() {
+                    openButton.invalidate();
+                }
+            });
+        }
+
+        public void connect(String address) {
+            Log.d(LOGTAG, "connect to id "+id+" address:" + address);
             // Previously connected device.  Try to reconnect.
             /*
             if (bleDeviceAddress.equals(address) && bluetoothGatt != null) {
@@ -306,38 +369,52 @@ public class IntroActivity extends Activity {
         }
 
         /**
-         * close current ble connection
-         * */
-        private void close(){
-//        if(bluetoothGatt != null) {
-            disconnect();
-            bluetoothGatt.close();
-            bluetoothGatt = null;
-//        }
-        }
-
-        /**
          * disconnect && close current ble connection
          * */
         private void disconnect(){
-            Log.d(LOGTAG,"disconnect");
-            bluetoothGatt.disconnect();
-            connectionState = DeviceControlActivity.CONNECTION_STATE.DISCONNECTED;
+            Log.d(LOGTAG,"disconnect id"+id);
+            if(bluetoothGatt != null) {
+                bluetoothGatt.close();
+                bluetoothGatt.disconnect();
+                bluetoothGatt = null;
+                connectionState = DeviceControlActivity.CONNECTION_STATE.DISCONNECTED;
+            }else{
+                //TODO: check this
+                Log.w(LOGTAG,"disconnect while not connected, investigate why!!");
+            }
+            enableConnectButton(false);
+
         }
-
-
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             Log.d(LOGTAG,"PlaceholderFragment onCreate "+savedInstanceState);
+            bleInit();
+        }
+
+
+        private void bleInit() {
+            //BLE init
+            // Initializes Bluetooth adapter.
+            final BluetoothManager bluetoothManager =
+                    (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+            bluetoothAdapter = bluetoothManager.getAdapter();
+            // Ensures Bluetooth is available on the device and it is enabled. If not,
+            // displays a dialog requesting user permission to enable Bluetooth.
+            if (bleAdapter == null || !bluetoothAdapter.isEnabled()) {
+                Log.d(LOGTAG, "Enablar bluetooth");
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            }
 
         }
+
 
         MyBluetoothGattCallback gattCallback = new MyBluetoothGattCallback();
         private class MyBluetoothGattCallback extends BluetoothGattCallback {
 
-            private static final String LOGTAG = "DeviceControlActivity:BluetoothGattCallback";
+            private static final String LOGTAG = "IntroActivity:BluetoothGattCallback";
             public boolean servicesDiscovered = false;
             private BluetoothGatt bluetoothGatt = null;
 
@@ -347,26 +424,25 @@ public class IntroActivity extends Activity {
 
                 switch (newState){
                     case BluetoothProfile.STATE_CONNECTED:
+                        Log.d(LOGTAG,"STATE_CONNECTED");
                         bluetoothGatt = gatt;
                         connectionState = DeviceControlActivity.CONNECTION_STATE.CONNECTED;
                         boolean ok = bluetoothGatt.discoverServices();
-
-                        //Enablar beep button
-                        //FIXME: update button on UI thread!
-                        //beepButton.setEnabled(true);
-
                         Log.d(LOGTAG,"Tried to discover services:"+ok);
+
+                        //FIXME: update button on UI thread!
+                        enableConnectButton(true);
+
                         break;
                     case BluetoothProfile.STATE_DISCONNECTED:
+                        Log.d(LOGTAG,"STATE_DISCONNECTED");
                         bluetoothGatt = null;
                         connectionState = DeviceControlActivity.CONNECTION_STATE.DISCONNECTED;
-
-                        //Disable beep button
+                        enableConnectButton(false);
                         //FIXME: update button on UI thread!
-                        //beepButton.setEnabled(false);
-
                         break;
                     default:
+                        enableConnectButton(false);
                         Log.d(LOGTAG,"unknown connection state status:"+status+ " newState:"+newState);
                 }
 
@@ -454,9 +530,6 @@ public class IntroActivity extends Activity {
                     servicesDiscovered = false;
                     Log.w(LOGTAG,"onServicesDiscovered got status:"+status);
                 }
-                beep();
-
-                fixme: update UI open door button
 
             }
 
@@ -535,7 +608,6 @@ public class IntroActivity extends Activity {
                 readBatteryLevel(bluetoothGatt);
             }
 
-
             private void readBatteryLevel(BluetoothGatt bluetoothGatt) {
                 Log.d(LOGTAG,"readBatteryLevel");
                 //00001802-0000-1000-8000-00805f9b34fb
@@ -555,7 +627,17 @@ public class IntroActivity extends Activity {
                 final String IMMEDIATE_ALERT_SERVICE_UUID = "00001802"+DEFAULT;
                 final String PROXIMITY_ALERT_LEVEL_UUID = "00002a06"+DEFAULT;
                 BluetoothGattService service = bluetoothGatt.getService(UUID.fromString(IMMEDIATE_ALERT_SERVICE_UUID));
+                if(service == null){
+                    Log.e(LOGTAG,"ReadBeep bluetoothGatt.getService failed");
+                    return;
+                }
+
                 BluetoothGattCharacteristic characteristic = service.getCharacteristic(UUID.fromString(PROXIMITY_ALERT_LEVEL_UUID));
+                if(characteristic == null){
+                    Log.e(LOGTAG,"ReadBeep service.getCharacteristic failed");
+                    return;
+                }
+
                 boolean couldRead = bluetoothGatt.readCharacteristic(characteristic);
                 Log.d(LOGTAG,"readBeep couldRead:"+couldRead);
             }
@@ -567,7 +649,17 @@ public class IntroActivity extends Activity {
                 final String IMMEDIATE_ALERT_SERVICE_UUID = "00001802"+DEFAULT;
                 final String PROXIMITY_ALERT_LEVEL_UUID = "00002a06"+DEFAULT;
                 BluetoothGattService service = gatt.getService(UUID.fromString(IMMEDIATE_ALERT_SERVICE_UUID));
+                if(service == null){
+                    Log.e(LOGTAG,"WriteBeep gatt.getService failed");
+                    return;
+                }
+
                 BluetoothGattCharacteristic characteristic = service.getCharacteristic(UUID.fromString(PROXIMITY_ALERT_LEVEL_UUID));
+                if(characteristic == null){
+                    Log.e(LOGTAG,"WriteBeep service.getCharacteristic failed");
+                    return;
+                }
+
                 //descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
                 characteristic.setValue(new byte[] {0x01} );
                 gatt.writeCharacteristic(characteristic);
