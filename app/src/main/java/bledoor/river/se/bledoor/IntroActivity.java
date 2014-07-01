@@ -405,7 +405,11 @@ public class IntroActivity extends Activity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             Log.d(LOGTAG,"PlaceholderFragment onCreate "+savedInstanceState);
-            bleInit();
+            //FIXME harcode so only active in FIRST view
+            int idt = getArguments().getInt(ARG_SECTION_NUMBER,-1);
+            Log.d(LOGTAG,"Idt:"+idt);
+            if(idt==1)
+                bleInit();
         }
 
 
