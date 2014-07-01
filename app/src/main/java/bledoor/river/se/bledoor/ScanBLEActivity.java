@@ -1,6 +1,5 @@
 package bledoor.river.se.bledoor;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -10,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,7 +28,7 @@ import java.util.ArrayList;
  * This Activity can scan device and show them in a select able list,
  * user can select a device to save it.
  * */
-public class ScanBLEActivity extends Activity {
+public class ScanBLEActivity extends FragmentActivity implements PasswordDialog.PasswordDialogInterface {
 
     public static final String BLE_DEVICE_ADRESS = "BLE_DEVICE_ADRESS";
     public static final String BLE_DEVIE_NAME = "BLE_DEVIE_NAME";
@@ -42,6 +42,9 @@ public class ScanBLEActivity extends Activity {
     private static final int REQUEST_ENABLE_BT = 1;
     private ArrayList<BLEDeviceInfo> bleDeviceses;
     MyListAdapter myListAdapter;
+
+    //information about current BTLE device
+    private BLEDeviceInfo bleDeviceInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,21 +84,13 @@ public class ScanBLEActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(LOGTAG,"onItemClick pos:"+position+ " id:"+id);
-
-                //disable scanning
-                scanLeDevice(false);
+                //Add dialog here and return if code is not correct!
+                PasswordDialog passwordDialog = new PasswordDialog();
+                passwordDialog.show(getSupportFragmentManager(),"password_fragment_tag");
 
                 //Get info from the BLE device
-                BLEDeviceInfo bleDeviceInfo = bleDeviceses.get(position);
-                String address = bleDeviceInfo.address;
-                String name = bleDeviceInfo.bluetoothDevice.getName();
+                bleDeviceInfo = bleDeviceses.get(position);
 
-                //send the info in a Intent to a start a activity
-                //fixme: make this a application local intent!
-                Intent startControlActivity = new Intent(getApplicationContext(),SaveDevice.class);
-                startControlActivity.putExtra(BLE_DEVICE_ADRESS, address);
-                startControlActivity.putExtra(BLE_DEVIE_NAME, name);
-                startActivity(startControlActivity);
             }
         });
     }
@@ -208,6 +203,31 @@ public class ScanBLEActivity extends Activity {
             bleDeviceses.add(tmp);
         }
         myListAdapter.notifyDataSetChanged();
+
+    }
+
+
+    @Override //from PasswordDialog.PasswordDialogInterface
+    public void password(String password) {
+        Log.d(LOGTAG,"password "+ password);
+        if(!password.equals("0000")){
+            Toast.makeText(this,getString(R.string.scan_ble_incorrect_pin),Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Toast.makeText(this,getString(R.string.scan_ble_correct_pin),Toast.LENGTH_SHORT).show();
+        //disable scanning
+        scanLeDevice(false);
+
+        String bleDeviceAddress = bleDeviceInfo.address;
+        String bleDeviceName = bleDeviceInfo.bluetoothDevice.getName();
+
+        //send the info in a Intent to a start a activity
+        //fixme: make this a application local intent!
+        Intent startControlActivity = new Intent(getApplicationContext(),SaveDevice.class);
+        startControlActivity.putExtra(BLE_DEVICE_ADRESS, bleDeviceAddress);
+        startControlActivity.putExtra(BLE_DEVIE_NAME, bleDeviceName);
+        startActivity(startControlActivity);
 
     }
 
