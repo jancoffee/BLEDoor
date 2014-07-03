@@ -117,9 +117,18 @@ public class IntroActivity extends Activity {
     protected void onPause() {
         super.onPause();
         Log.d(LOGTAG,"onPause");
+        //finish();
 
     }
-
+    @Override
+    public void onBackPressed()
+    {
+        //todo: Kolla på start parameterar till StartActivity för att återanvända en gammal activity
+        //    alt död hela appen vid onBackPress
+        Log.d(LOGTAG,"onBackPressed");
+        //super.onBackPressed();
+        finish();
+    }
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -130,11 +139,19 @@ public class IntroActivity extends Activity {
     private void parseIncomingIntent(Intent intent){
         Log.d(LOGTAG,"parseIncomingIntent intent:"+intent);
 
-        if(intent!=null){
-            bleDeviceAddress = intent.getStringExtra(ScanBLEActivity.BLE_DEVICE_ADRESS);
-            bleDeviceName = intent.getStringExtra(ScanBLEActivity.BLE_DEVIE_NAME);
-        }
+        if(intent==null)
+            return;
 
+        String tmpAddress = intent.getStringExtra(ScanBLEActivity.BLE_DEVICE_ADRESS);
+        String tmpName = intent.getStringExtra(ScanBLEActivity.BLE_DEVIE_NAME);
+
+
+        if(tmpAddress != null && tmpAddress.length() > 0  && tmpName != null && tmpName.length() > 0 ) {
+            bleDeviceAddress = tmpAddress;
+            bleDeviceName = tmpName;
+        }
+        Log.d(LOGTAG,"tmpAddress:"+tmpAddress+ " tmpName:"+tmpName);
+        Log.d(LOGTAG,"bleDeviceAddress:"+bleDeviceAddress+ " bleDeviceName:"+bleDeviceName);
     }
 
     //called when the open button is clicked
@@ -158,6 +175,7 @@ public class IntroActivity extends Activity {
     }
 
     public String getBleDeviceAddress(){
+        Log.d(LOGTAG,"getBleDeviceAddress:"+bleDeviceAddress);
         return bleDeviceAddress;
     }
 
@@ -212,6 +230,7 @@ public class IntroActivity extends Activity {
      */
     public class PlaceholderFragment extends Fragment {
 
+        private static final long CONNECTION_TIMEOUT = 1000 * 3;
         private final String LOGTAG = "IntroActivity:PlaceholderFragment";
         private BluetoothAdapter bleAdapter;
 
@@ -222,6 +241,9 @@ public class IntroActivity extends Activity {
         private View rootView;
         private BluetoothAdapter bluetoothAdapter;
         private TextView rssiValue;
+
+        //headline/title of the page, visible name of the Garage door.
+        private TextView introFragmentHeadline;
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -263,15 +285,22 @@ public class IntroActivity extends Activity {
             });
 
             rssiValue = (TextView)rootView.findViewById(R.id.rssi_value);
+            introFragmentHeadline = (TextView)rootView.findViewById(R.id.intro_fragment_headline);
 
             return rootView;
 
         }
 
         @Override
+        public void onDestroyView() {
+            super.onDestroyView();
+            Log.d(LOGTAG,"onDestroyView");
+        }
+
+        @Override
         public void onPause() {
             super.onDestroy();
-            Log.d(LOGTAG,"onDestroy");
+            Log.d(LOGTAG,"onPause");
             disconnect();
         }
 
@@ -280,8 +309,24 @@ public class IntroActivity extends Activity {
             super.onResume();
             Log.d(LOGTAG,"onResume");
             String address = ((IntroActivity)getActivity()).getBleDeviceAddress();
-            if(address != null && address.length() > 0)
+            if(address != null && address.length() > 0) {
+                foundDoor(true);
                 connect(address);
+            }else {
+                foundDoor(false);
+            }
+        }
+
+        private void foundDoor(boolean foundDoor) {
+            if (foundDoor) {
+                //todo: set title to "Garage Door, Mum"
+                introFragmentHeadline.setText(getResources().getString(R.string.intro_fragment_headline_example_door));
+                //todo: change bg picture
+            } else {
+                //todo: set title to "No door found"
+                introFragmentHeadline.setText(getResources().getString(R.string.intro_fragment_headline_no_door));
+                //todo: change bg picture
+            }
         }
 
         private void openDoor() {
@@ -294,7 +339,7 @@ public class IntroActivity extends Activity {
                 public void run() {
                     disconnect();
                 }
-            },1000*3);
+            },CONNECTION_TIMEOUT);
 
         }
 
