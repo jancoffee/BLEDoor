@@ -24,7 +24,9 @@
     <string name="version_name">date:2014-07-01</string>
     <string name="version_code">1.0</string>
     <string name="scan_add_devices_found">Doors found:</string>
-    <string name="intro_fragment_headline">Garage door</string>
+    <string name="intro_fragment_headline_no_door">No Garage Door found</string>
+    <string name="intro_fragment_headline_example_door">Garage Door, Mum</string>
+
     <string name="password_dialog_fragment_desc">Please enter PIN for garage door</string>
     <string name="password_dialog_fragment_title">Garage door PIN</string>
     <string name="password_dialog_fragment_cancel_text">Cancel</string>
