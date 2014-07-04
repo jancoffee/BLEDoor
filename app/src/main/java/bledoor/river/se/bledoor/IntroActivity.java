@@ -622,31 +622,44 @@ public class IntroActivity extends Activity {
                 Log.d(LOGTAG,"onServicesDiscovered status:"+status);
                 HashMap<String,String> dd = new HashMap<String,String>();
                 dd.put("","");
+
                 if(status == BluetoothGatt.GATT_SUCCESS){
                     //All ok, do stuff
                     servicesDiscovered = true;
-                    for(BluetoothGattService service : gatt.getServices()){
-                        Log.d(LOGTAG,"Service found Uuid:"+UUIDParser.Parse(service.getUuid()) + " of type:"+service.getType());
 
-                        for( BluetoothGattCharacteristic characteristic : service.getCharacteristics()){
-                            Log.d(LOGTAG,"Characteristic found Uuid:"+UUIDParser.Parse(characteristic.getUuid()));
-                            Log.d(LOGTAG,"Characteristic permissions:"+ characteristic.getPermissions());
+                    if(gatt!=null){
+                        //immediate alert server
+                        //hack: will only give the FIRST INSTANCE of the Service
+                        BluetoothGattService mm = gatt.getService(UUID.fromString("00001802-0000-1000-8000-00805f9b34fb"));
+                        Log.d(LOGTAG,"BluetoothGattService type:"+( mm != null ? mm.getType() : "null" ));
 
-                            //TODO enable? services
-                            //TODO enable? notifications services
-                            for(BluetoothGattDescriptor descriptor : characteristic.getDescriptors() ){
-                                Log.d(LOGTAG,"BluetoothGattDescriptor found Uuid:"+UUIDParser.Parse(descriptor.getUuid()));
-                                Log.d(LOGTAG,"BluetoothGattDescriptor permissions:"+ descriptor.getPermissions());
-
-                                if(descriptor.getValue()!=null)
-                                    Log.d(LOGTAG,"BluetoothGattDescriptor getvalue: 0x00");
-                                else
-                                    Log.d(LOGTAG,"BluetoothGattDescriptor getvalue:" + descriptor.getValue());
-
-                            }
+                        //hack: will only give the FIRST INSTANCE of the Characteristic
+                        if(mm!=null) {
+                            BluetoothGattCharacteristic gg = mm.getCharacteristic(UUID.fromString("00002a06-0000-1000-8000-00805f9b34fb"));
+                            Log.d(LOGTAG, "BluetoothGattService getProperties:" + ( gg != null ? gg.getProperties() : "null"));
                         }
                     }
-                    */
+//                    for(BluetoothGattService service : gatt.getServices()){
+//                        Log.d(LOGTAG,"Service found Uuid:"+UUIDParser.Parse(service.getUuid()) + " of type:"+service.getType());
+//
+//                        for( BluetoothGattCharacteristic characteristic : service.getCharacteristics()){
+//                            Log.d(LOGTAG,"Characteristic found Uuid:"+UUIDParser.Parse(characteristic.getUuid()));
+//                            Log.d(LOGTAG,"Characteristic permissions:"+ characteristic.getPermissions());
+//
+//                            //TODO enable? services
+//                            //TODO enable? notifications services
+//                            for(BluetoothGattDescriptor descriptor : characteristic.getDescriptors() ){
+//                                Log.d(LOGTAG,"BluetoothGattDescriptor found Uuid:"+UUIDParser.Parse(descriptor.getUuid()));
+//                                Log.d(LOGTAG,"BluetoothGattDescriptor permissions:"+ descriptor.getPermissions());
+//
+//                                if(descriptor.getValue()!=null)
+//                                    Log.d(LOGTAG,"BluetoothGattDescriptor getvalue: 0x00");
+//                                else
+//                                    Log.d(LOGTAG,"BluetoothGattDescriptor getvalue:" + descriptor.getValue());
+//
+//                            }
+//                        }
+//                    }
                 }else{
                     //uhho, no good
                     servicesDiscovered = false;
