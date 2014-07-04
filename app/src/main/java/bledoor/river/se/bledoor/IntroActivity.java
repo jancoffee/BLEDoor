@@ -375,7 +375,7 @@ public class IntroActivity extends Activity {
                     @Override
                     public void run() {
                         openButton.setEnabled(true);
-                        openButton.setBackgroundResource(R.drawable.open_btn_connected);
+                        openButton.setBackgroundResource(R.drawable.open_btn_connecting);
                         openButton.setVisibility(View.VISIBLE);
                         openButton.invalidate();
                     }
@@ -675,8 +675,18 @@ public class IntroActivity extends Activity {
 
                         //hack: will only give the FIRST INSTANCE of the Characteristic
                         if(mm!=null) {
-                            BluetoothGattCharacteristic gg = mm.getCharacteristic(UUID.fromString("00002a06-0000-1000-8000-00805f9b34fb"));
+                            final BluetoothGattCharacteristic gg = mm.getCharacteristic(UUID.fromString("00002a06-0000-1000-8000-00805f9b34fb"));
                             Log.d(LOGTAG, "BluetoothGattService getProperties:" + ( gg != null ? gg.getProperties() : "null"));
+                            if(gg!=null) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.d(LOGTAG, "Setting the GREEN button, propterties:" + ( gg != null ? gg.getProperties() : "null"));
+                                        openButton.setBackgroundResource(R.drawable.open_btn_connected);
+                                        openButton.invalidate();
+                                    }
+                                });
+                            }
                         }
                     }
 //                    for(BluetoothGattService service : gatt.getServices()){
