@@ -434,9 +434,9 @@ public class IntroActivity extends Activity {
                                 "\nBluetoothClass:"+device.getBluetoothClass().toString()+
                                 "\nAddress:"+device.getAddress()+
                                 "\nrssi:"+rssi;
-                        Log.d(LOGTAG, deviceStr);
+                        //Log.d(LOGTAG, deviceStr);
                         if(bleDeviceAddress != null && bleDeviceAddress.equals(device.getAddress())){
-                            Log.d(LOGTAG,"MATCHED ADDRESS rssiValue:"+rssiValue);
+                            Log.d(LOGTAG,"MATCHED ADDRESS rssiValue:"+rssiValue +" for device:"+bleDeviceAddress + " incoming device:"+device.getAddress());
                             rssiValue.setText(String.valueOf(rssi));
                         }
                     }
@@ -560,7 +560,7 @@ public class IntroActivity extends Activity {
                         bluetoothGatt = null;
                         connectionState = DeviceControlActivity.CONNECTION_STATE.DISCONNECTED;
                         enableConnectButton(false);
-                        //FIXME: update button on UI thread!
+
                         break;
                     default:
                         enableConnectButton(false);
@@ -646,10 +646,11 @@ public class IntroActivity extends Activity {
                             }
                         }
                     }
+                    */
                 }else{
                     //uhho, no good
                     servicesDiscovered = false;
-                    Log.w(LOGTAG,"onServicesDiscovered got status:"+status);
+                    Log.e(LOGTAG,"onServicesDiscovered got unknown status:"+status);
                 }
 
             }
