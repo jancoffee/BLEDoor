@@ -19,6 +19,7 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
@@ -102,10 +103,33 @@ public class IntroActivity extends Activity {
             }
         });
 
-        //adding application info to log
-        Log.d(LOGTAG,"Version code:"+getResources().getString(R.string.version_code));
-        Log.d(LOGTAG,"Version name:"+getResources().getString(R.string.version_name));
+        logDeviceInformation();
     }
+
+    private void logDeviceInformation(){
+        //adding application info to log
+        Log.d(LOGTAG,"Application Version code:"+getResources().getString(R.string.version_code));
+        Log.d(LOGTAG,"Application Version release name:"+getResources().getString(R.string.version_name));
+        Log.d(LOGTAG,"Build.DEVICE:"+ Build.DEVICE);
+        Log.d(LOGTAG,"Build.BRAND:"+ Build.BRAND);
+        Log.d(LOGTAG,"Build.BOARD:"+ Build.BOARD);
+        Log.d(LOGTAG,"Build.DISPLAY:"+ Build.DISPLAY);
+        Log.d(LOGTAG,"Build.FINGERPRINT:"+ Build.FINGERPRINT);
+        Log.d(LOGTAG,"Build.HARDWARE:"+ Build.HARDWARE);
+        Log.d(LOGTAG,"Build.ID:"+ Build.ID);
+        Log.d(LOGTAG,"Build.MANUFACTURER:"+ Build.MANUFACTURER);
+        Log.d(LOGTAG,"Build.MODEL:"+ Build.MODEL);
+        Log.d(LOGTAG,"Build.PRODUCT:"+ Build.PRODUCT);
+        Log.d(LOGTAG,"Build.SERIAL:"+ Build.SERIAL);
+        Log.d(LOGTAG,"Build.TAGS:"+ Build.TAGS);
+        Log.d(LOGTAG,"Build.TIME:"+ Build.TIME);
+        Log.d(LOGTAG,"Build.TYPE:"+ Build.TYPE);
+        Log.d(LOGTAG,"Build.USER:"+ Build.USER);
+        Log.d(LOGTAG,"Build.VERSION.RELEASE:"+ Build.VERSION.RELEASE);
+        Log.d(LOGTAG,"Build.VERSION.CODENAME:"+ Build.VERSION.CODENAME);
+        Log.d(LOGTAG,"Build.VERSION.INCREMENTAL:"+ Build.VERSION.INCREMENTAL);
+        Log.d(LOGTAG,"Build.VERSION.SDK_INT:"+ Build.VERSION.SDK_INT);
+   }
 
     @Override
     protected void onResume() {
@@ -351,7 +375,7 @@ public class IntroActivity extends Activity {
                     @Override
                     public void run() {
                         openButton.setEnabled(true);
-                        openButton.setBackgroundResource(R.drawable.open_btn_green);
+                        openButton.setBackgroundResource(R.drawable.open_btn_connected);
                         openButton.setVisibility(View.VISIBLE);
                         openButton.invalidate();
                     }
@@ -363,7 +387,7 @@ public class IntroActivity extends Activity {
                     @Override
                     public void run() {
                         openButton.setEnabled(false);
-                        openButton.setBackgroundResource(R.drawable.open_btn_non_green);
+                        openButton.setBackgroundResource(R.drawable.open_btn_not_connected);
                         openButton.setVisibility(View.VISIBLE);
                         openButton.invalidate();
                     }
