@@ -361,7 +361,7 @@ public class IntroActivity extends Activity {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    disconnect();
+                    disconnectAndStartScan();
                 }
             },CONNECTION_TIMEOUT);
 
@@ -438,6 +438,7 @@ public class IntroActivity extends Activity {
                         if(bleDeviceAddress != null && bleDeviceAddress.equals(device.getAddress())){
                             Log.d(LOGTAG,"MATCHED ADDRESS rssiValue:"+rssiValue +" for device:"+bleDeviceAddress + " incoming device:"+device.getAddress());
                             rssiValue.setText(String.valueOf(rssi));
+//                            connect(bleDeviceAddress);
                         }
                     }
                 });
@@ -445,11 +446,16 @@ public class IntroActivity extends Activity {
         };
 
 
-        public void connect(String address) {
+        public void connect(final String address) {
             Log.d(LOGTAG, "connect to id "+id+" address:" + address);
             //disable ble scan
-            if(bluetoothAdapter!=null)
-                bluetoothAdapter.stopLeScan(mLeScanCallback);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(bluetoothAdapter!=null)
+                        bluetoothAdapter.stopLeScan(mLeScanCallback);
+                }
+            });
 
             // Previously connected device.  Try to reconnect.
             /*
@@ -465,22 +471,30 @@ public class IntroActivity extends Activity {
             }
             */
             if(bluetoothGatt != null)
-                disconnect();
+                disconnectAndStartScan();
 
             if(bluetoothAdapter==null){
                 Log.e(LOGTAG,"bluetoothAdapter is null in connect");
                 return;
             }
 
-            BluetoothDevice bleDevice = bluetoothAdapter.getRemoteDevice(address);
-            if(bleDevice==null) {
-                Log.e(LOGTAG, "Could'nt get a BluetoothDevice");
-                return;
-            }
-            bluetoothGatt = bleDevice.connectGatt(getActivity().getBaseContext(),true,gattCallback);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final BluetoothDevice bleDevice = bluetoothAdapter.getRemoteDevice(address);
+                    if(bleDevice==null) {
+                        Log.e(LOGTAG, "Could'nt get a BluetoothDevice");
+                        return;
+                    }
+
+                    bluetoothGatt = bleDevice.connectGatt(getActivity().getBaseContext(),true,gattCallback);
+                }
+            });
             connectionState = DeviceControlActivity.CONNECTION_STATE.CONNECTING;
 
         }
+
+
 
         /**
          * disconnect && close current ble connection
@@ -488,16 +502,32 @@ public class IntroActivity extends Activity {
         private void disconnect(){
             Log.d(LOGTAG,"disconnect id"+id);
             if(bluetoothGatt != null) {
-                bluetoothGatt.close();
-                bluetoothGatt.disconnect();
-                bluetoothGatt = null;
-                connectionState = DeviceControlActivity.CONNECTION_STATE.DISCONNECTED;
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        bluetoothGatt.close();
+                        bluetoothGatt.disconnect();
+                        bluetoothGatt = null;
+                        connectionState = DeviceControlActivity.CONNECTION_STATE.DISCONNECTED;
+                    }
+                });
             }else{
                 //TODO: check this
                 Log.w(LOGTAG,"disconnect while not connected, investigate why!!");
             }
             enableConnectButton(false);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(bluetoothAdapter!=null)
+                        bluetoothAdapter.stopLeScan(mLeScanCallback);
+                }
+            });
 
+        }
+        private void disconnectAndStartScan() {
+            Log.d(LOGTAG,"disconnectAndStartScan id"+id);
+            disconnect();
             //start ble scan
             if(bluetoothAdapter!=null)
                 bluetoothAdapter.startLeScan(mLeScanCallback);
@@ -543,13 +573,23 @@ public class IntroActivity extends Activity {
             public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
                 Log.d(LOGTAG,"onConnectionStateChange connection state status:"+status+" newState:"+newState);
 
+                Runnable getServicesRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        //hack: have to LOCK the bluetoothGatt
+                        if(bluetoothGatt != null);
+                        boolean ok = bluetoothGatt.discoverServices();
+                        Log.d(LOGTAG,"Doing a bluetoothGatt.discoverServices"+ok);
+                    }
+                };
+
                 switch (newState){
                     case BluetoothProfile.STATE_CONNECTED:
                         Log.d(LOGTAG,"STATE_CONNECTED");
                         bluetoothGatt = gatt;
                         connectionState = DeviceControlActivity.CONNECTION_STATE.CONNECTED;
-                        boolean ok = bluetoothGatt.discoverServices();
-                        Log.d(LOGTAG,"Tried to discover services:"+ok);
+
+                        getActivity().runOnUiThread(getServicesRunnable);
 
                         //FIXME: update button on UI thread!
                         enableConnectButton(true);
