@@ -264,7 +264,6 @@ public class IntroActivity extends Activity {
         private int id;
         private View rootView;
         private BluetoothAdapter bluetoothAdapter;
-        private TextView rssiValue;
 
         //headline/title of the page, visible name of the Garage door.
         private TextView introFragmentHeadline;
@@ -309,7 +308,6 @@ public class IntroActivity extends Activity {
                 }
             });
 
-            rssiValue = (TextView)rootView.findViewById(R.id.rssi_value);
             introFragmentHeadline = (TextView)rootView.findViewById(R.id.intro_fragment_headline);
 
             return rootView;
@@ -437,8 +435,7 @@ public class IntroActivity extends Activity {
                                 "\nrssi:"+rssi;
                         //Log.d(LOGTAG, deviceStr);
                         if(bleDeviceAddress != null && bleDeviceAddress.equals(device.getAddress())){
-                            Log.d(LOGTAG,"MATCHED ADDRESS rssiValue:"+rssiValue +" for device:"+bleDeviceAddress + " incoming device:"+device.getAddress());
-                            rssiValue.setText(String.valueOf(rssi));
+                            Log.d(LOGTAG,"MATCHED ADDRESS rssiValue:"+rssi +" for device:"+bleDeviceAddress + " incoming device:"+device.getAddress());
 //                            connect(bleDeviceAddress);
                         }
                     }
