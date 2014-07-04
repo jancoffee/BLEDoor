@@ -343,7 +343,7 @@ public class IntroActivity extends Activity {
         private void foundDoor(boolean foundDoor) {
             if (foundDoor) {
                 //todo: set title to "Garage Door, Mum"
-                introFragmentHeadline.setText(getResources().getString(R.string.intro_fragment_headline_example_door));
+                introFragmentHeadline.setText(getResources().getString(R.string.intro_fragment_headline_example_door)+" "+String.valueOf(id));
                 //todo: change bg picture
             } else {
                 //todo: set title to "No door found"
