@@ -304,7 +304,8 @@ public class IntroActivity extends Activity {
                     if( !v.isEnabled() )
                         return;
 
-                    openDoor();
+                    if(gattCallback.getServicesDiscovered())
+                        openDoor();
                 }
             });
 
@@ -358,12 +359,12 @@ public class IntroActivity extends Activity {
             gattCallback.beep();
             //set disconnect timer
 
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    disconnectAndStartScan();
-                }
-            },CONNECTION_TIMEOUT);
+//            handler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    disconnectAndStartScan();
+//                }
+//            },CONNECTION_TIMEOUT);
 
         }
 
@@ -374,7 +375,7 @@ public class IntroActivity extends Activity {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        openButton.setEnabled(true);
+                        openButton.setEnabled(false);
                         openButton.setBackgroundResource(R.drawable.open_btn_connecting);
                         openButton.setVisibility(View.VISIBLE);
                         openButton.invalidate();
@@ -569,6 +570,10 @@ public class IntroActivity extends Activity {
             public boolean servicesDiscovered = false;
             private BluetoothGatt bluetoothGatt = null;
 
+            public boolean getServicesDiscovered(){
+                return servicesDiscovered;
+            }
+
             @Override
             public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
                 Log.d(LOGTAG,"onConnectionStateChange connection state status:"+status+" newState:"+newState);
@@ -663,9 +668,11 @@ public class IntroActivity extends Activity {
                 HashMap<String,String> dd = new HashMap<String,String>();
                 dd.put("","");
 
+                //always reset this as a precuation
+                servicesDiscovered = false;
+
                 if(status == BluetoothGatt.GATT_SUCCESS){
                     //All ok, do stuff
-                    servicesDiscovered = true;
 
                     if(gatt!=null){
                         //immediate alert server
@@ -684,8 +691,10 @@ public class IntroActivity extends Activity {
                                         Log.d(LOGTAG, "Setting the GREEN button, propterties:" + ( gg != null ? gg.getProperties() : "null"));
                                         openButton.setBackgroundResource(R.drawable.open_btn_connected);
                                         openButton.invalidate();
+                                        openButton.setEnabled(true);
                                     }
                                 });
+                                servicesDiscovered = true;
                             }
                         }
                     }
