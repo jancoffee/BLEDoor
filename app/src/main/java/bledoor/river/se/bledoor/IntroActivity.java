@@ -275,6 +275,9 @@ public class IntroActivity extends Activity {
         //headline/title of the page, visible name of the Garage door.
         private TextView introFragmentHeadline;
 
+        //progressbar wheel showing connection
+        private ProgressBar connectionProgressbar;
+
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -316,6 +319,8 @@ public class IntroActivity extends Activity {
             });
 
             introFragmentHeadline = (TextView)rootView.findViewById(R.id.intro_fragment_headline);
+
+            connectionProgressbar = (ProgressBar)rootView.findViewById(R.id.progressBar1);
 
             return rootView;
 
@@ -493,6 +498,7 @@ public class IntroActivity extends Activity {
                     }
 
                     bluetoothGatt = bleDevice.connectGatt(getActivity().getBaseContext(),true,gattCallback);
+                    connectionProgressbar.setVisibility(View.VISIBLE);
                 }
             });
             connectionState = DeviceControlActivity.CONNECTION_STATE.CONNECTING;
@@ -606,10 +612,16 @@ public class IntroActivity extends Activity {
                         break;
                     case BluetoothProfile.STATE_DISCONNECTED:
                         Log.d(LOGTAG,"STATE_DISCONNECTED");
+
                         bluetoothGatt = null;
                         connectionState = DeviceControlActivity.CONNECTION_STATE.DISCONNECTED;
                         enableConnectButton(false);
-
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                connectionProgressbar.setVisibility(View.VISIBLE);
+                            }
+                        });
                         break;
                     default:
                         enableConnectButton(false);
@@ -697,6 +709,7 @@ public class IntroActivity extends Activity {
                                         openButton.setBackgroundResource(R.drawable.open_btn_connected);
                                         openButton.invalidate();
                                         openButton.setEnabled(true);
+                                        connectionProgressbar.setVisibility(View.INVISIBLE);
                                     }
                                 });
                                 servicesDiscovered = true;
