@@ -13,10 +13,10 @@
     <string name="disconnect_button">disconnect</string>
     <string name="beep_button">beep-it</string>
     <string name="battery_button">read battery</string>
-    <string name="title_activity_save_device">SaveDevice</string>
+    <string name="title_activity_save_device">SaveDoor</string>
     <string name="add_new_door">Add a new door</string>
     <string name="device_desc_title">Door description</string>
-    <string name="device_info">information from device</string>
+    <string name="device_info">information from door</string>
     <string name="device_info_title">Door Title</string>
     <string name="title_section1">title_section1</string>
     <string name="title_section2">title_section2</string>
@@ -33,5 +33,9 @@
     <string name="password_dialog_fragment_ok_text">OK</string>
     <string name="scan_ble_incorrect_pin">Incorrect PIN</string>
     <string name="scan_ble_correct_pin">correct PIN</string>
+    <string name="save_device_door_name">Door name</string>
+    <string name="save_device_door_address">Door address</string>
+    <string name="save_device_door_description">Enter your own description of the door here</string>
+    <string name="save_device_save_device_button">Save door</string>
 
 </resources>

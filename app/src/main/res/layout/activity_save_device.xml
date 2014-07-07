@@ -9,35 +9,30 @@
     tools:context="bledoor.river.se.bledoor.SaveDevice">
 
     <!-- Page Title  -->
+
     <TextView
+        android:padding="10dp"
         android:text="@string/add_new_door"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="40dp"
+        android:textSize="20dp"
         android:layout_centerHorizontal="true"
         android:id="@+id/add_new_door" />
 
-    <!-- Device information Title  -->
-    <TextView
-        android:text="@string/device_info_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="21dp"
-        android:layout_below="@id/add_new_door"
-        android:id="@+id/device_info_title" />
-
     <!-- Device information from device -->
     <TextView
+        android:padding="10dp"
         android:text="@string/device_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="21dp"
         android:id="@+id/device_info_text"
-        android:layout_below="@+id/device_info_title"
+        android:layout_below="@+id/add_new_door"
         android:layout_alignParentStart="true" />
 
     <!-- Device description title -->
     <TextView
+        android:padding="10dp"
         android:text="@string/device_desc_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -54,18 +49,31 @@
         android:id="@+id/device_desc"
         android:layout_below="@+id/device_desc_title"
         android:layout_alignParentStart="true"
-        android:text="-----\n---" />
+        android:hint="@string/save_device_door_description"
+        />
 
     <!-- Device description title -->
     <Button
+        android:padding="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save device"
+        android:text="@string/save_device_save_device_button"
         android:id="@+id/save_device_button"
         android:onClick="saveDeviceButtonClicked"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/device_desc"/>
+
+    <ImageButton
+        android:padding="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/proofdoor_one_logo"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_alignParentBottom="true"
+        android:alpha="0.5"
+        />
 
 
 </RelativeLayout>

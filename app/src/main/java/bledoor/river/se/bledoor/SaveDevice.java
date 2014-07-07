@@ -47,8 +47,9 @@ public class SaveDevice extends Activity {
     protected void onResume() {
         super.onResume();
         Log.d(LOGTAG,"onResume");
-        deviceInfoText.setText("Device Name:" +deviceName+ "\nDevice addr:"+deviceAddress);
-        deviceDesc.setText("Garage door 22");
+        deviceInfoText.setText(
+                getString(R.string.save_device_door_name) + "\n" +deviceName+ "\n\n" +
+                getString(R.string.save_device_door_address) + "\n"+deviceAddress);
     }
 
     @Override
