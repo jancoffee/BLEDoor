@@ -29,8 +29,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+/**
+ *
+ * WARNING, there is a lot of dependencies between the Activity that ARE NOT THREAD SAFE and they
+ * are run in separate threads! == NOT GOOD
+ * */
 
 public class IntroActivity extends Activity {
 
@@ -674,18 +681,19 @@ public class IntroActivity extends Activity {
                     if(gatt!=null){
                         //immediate alert server
                         //hack: will only give the FIRST INSTANCE of the Service
-                        BluetoothGattService mm = gatt.getService(UUID.fromString("00001802-0000-1000-8000-00805f9b34fb"));
-                        Log.d(LOGTAG,"BluetoothGattService type:"+( mm != null ? mm.getType() : "null" ));
-
-                        //hack: will only give the FIRST INSTANCE of the Characteristic
-                        if(mm!=null) {
-                            final BluetoothGattCharacteristic gg = mm.getCharacteristic(UUID.fromString("00002a06-0000-1000-8000-00805f9b34fb"));
-                            Log.d(LOGTAG, "BluetoothGattService getProperties:" + ( gg != null ? gg.getProperties() : "null"));
-                            if(gg!=null) {
+                        BluetoothGattService btleService = gatt.getService(UUID.fromString("00001802-0000-1000-8000-00805f9b34fb"));
+                        Log.d(LOGTAG, "BluetoothGattService type:" + (btleService != null ? btleService.getType() : "null"));
+                        BluetoothGattCharacteristic characteristic2 = null;
+                        //hack: will only give the FIRST INSTANCE of the Characteristic matching the UUID, might be several on the unit
+                        if(btleService!=null) {
+                            final BluetoothGattCharacteristic characteristic = btleService.getCharacteristic(UUID.fromString("00002a06-0000-1000-8000-00805f9b34fb"));
+                            characteristic2 = characteristic;
+                            Log.d(LOGTAG, "BluetoothGattService getProperties:" + (characteristic != null ? characteristic.getProperties() : "null"));
+                            if(characteristic!=null) {
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Log.d(LOGTAG, "Setting the GREEN button, propterties:" + ( gg != null ? gg.getProperties() : "null"));
+                                        Log.d(LOGTAG, "Setting the GREEN button, propterties:" + (characteristic != null ? characteristic.getProperties() : "null"));
                                         openButton.setBackgroundResource(R.drawable.open_btn_connected);
                                         openButton.invalidate();
                                         openButton.setEnabled(true);
@@ -693,6 +701,18 @@ public class IntroActivity extends Activity {
                                 });
                                 servicesDiscovered = true;
                             }
+                        }
+
+                        if(characteristic2 == null){
+                                //didn't find the expected characteristic, disconnect and connect to try again
+                                disconnect();
+                                String address = ((IntroActivity)getActivity()).getBleDeviceAddress();
+                                if(address != null && address.length() > 0) {
+                                    foundDoor(true);
+                                    connect(address);
+                                }else {
+                                    foundDoor(false);
+                                }
                         }
                     }
 //                    for(BluetoothGattService service : gatt.getServices()){
