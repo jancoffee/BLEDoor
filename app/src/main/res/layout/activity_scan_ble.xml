@@ -7,14 +7,28 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".ScanBLEActivity">
+
+    <ImageButton
+        android:padding="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/proofdoor_one_logo"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_alignParentBottom="true"
+        android:alpha="0.5"
+        />
+
     <TextView
+        android:layout_margin="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_new_door"
         android:id="@+id/scan_add_new_door"
-        android:textSize="30sp"
+        android:textSize="20sp"
         android:layout_centerHorizontal="true"/>
     <TextView
+        android:layout_margin="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/scan_add_devices_found"
@@ -23,6 +37,7 @@
         android:layout_below="@id/scan_add_new_door"/>
 
     <Button
+        android:padding="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/start_scan_ble_button_text"
@@ -30,6 +45,7 @@
         android:onClick="startScanning"
         android:layout_below="@id/scan_add_devices_found"/>
     <Button
+        android:padding="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/stop_scan_ble_button_text"
@@ -44,7 +60,9 @@
         android:id="@+id/ble_device_list"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/stop_scan_ble_button" />
+        android:layout_below="@+id/stop_scan_ble_button"
+        android:background="@android:color/transparent"/>
+    <!--
     <ImageButton
         android:id="@+id/wsi_label"
         android:layout_width="150dp"
@@ -52,6 +70,6 @@
         android:background="@drawable/proofdoor_wsi_logo"
         android:layout_alignParentBottom="true"
         android:layout_alignEnd="@+id/ble_device_list" />
-
+        -->
 
 </RelativeLayout>

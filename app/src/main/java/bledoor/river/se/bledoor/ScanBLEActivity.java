@@ -291,7 +291,7 @@ public class ScanBLEActivity extends FragmentActivity implements PasswordDialog.
             rssi.setText("rssi:" + String.valueOf(device.rssi));
 
             //setting the colors
-            convertView.setBackgroundColor(Color.rgb(228, 228, 228));
+            convertView.setBackgroundColor(Color.TRANSPARENT);
             deviceName.setTextColor(Color.BLACK);
             deviceAddress.setTextColor(Color.BLACK);
             rssi.setTextColor(Color.BLACK);
