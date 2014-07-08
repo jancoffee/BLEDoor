@@ -21,8 +21,8 @@
     <string name="title_section1">title_section1</string>
     <string name="title_section2">title_section2</string>
     <string name="title_section3">title_section3</string>
-    <string name="version_name">release date:2014-07-04</string>
-    <string name="version_code">0.2</string>
+    <string name="version_name">release date:2014-07-08</string>
+    <string name="version_code">0.3</string>
     <string name="scan_add_devices_found">Doors found:</string>
     <string name="intro_fragment_headline_no_door">No Garage Door found</string>
     <string name="intro_fragment_headline_example_door">Garage Door, Mum</string>
