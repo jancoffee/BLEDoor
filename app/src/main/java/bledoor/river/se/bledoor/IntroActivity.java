@@ -827,7 +827,7 @@ public class IntroActivity extends Activity {
                 writeBeep(bluetoothGatt);
                 readBeep(bluetoothGatt);
             }
-
+            @SuppressWarnings("unused")
             public void readBatteryLevel(){
                 readBatteryLevel(bluetoothGatt);
             }
@@ -889,7 +889,7 @@ public class IntroActivity extends Activity {
                 gatt.writeCharacteristic(characteristic);
             }
 
-        };
+        }
 
     }
 

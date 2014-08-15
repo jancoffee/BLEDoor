@@ -78,6 +78,7 @@ public class SaveDevice extends Activity {
     public void saveDeviceButtonClicked(View view) {
         Log.d(LOGTAG,"saveDeviceButtonClicked");
         //send an intent that start the swipe view
+        fixa så att man öppnar en gammal aktivity med ny data istället för att skapa en ny!
         Intent startActivity = new Intent(this,IntroActivity.class);
         startActivity.putExtra(ScanBLEActivity.BLE_DEVIE_NAME,deviceName);
         startActivity.putExtra(ScanBLEActivity.BLE_DEVICE_ADRESS,deviceAddress);
